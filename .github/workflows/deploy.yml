@@ -26,16 +26,11 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
       - name: Install dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Build
-        run: pnpm run build:github
+        run: npm run build:github
 
       - name: Copy index.html to 404.html (SPA routing)
         run: cp dist-github/index.html dist-github/404.html

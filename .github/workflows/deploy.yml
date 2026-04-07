@@ -26,11 +26,16 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build
-        run: npm run build:github
+        run: pnpm run build:github
 
       - name: Copy index.html to 404.html (SPA routing)
         run: cp dist-github/index.html dist-github/404.html

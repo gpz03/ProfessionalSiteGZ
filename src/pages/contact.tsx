@@ -1,5 +1,6 @@
 import { person } from "@/data/resume";
-import { Mail, Github, Linkedin } from "lucide-react";
+import { Mail } from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 export default function Contact() {
   return (
@@ -38,7 +39,7 @@ export default function Contact() {
           className="flex items-center gap-4 p-4 border border-border rounded-lg bg-card hover:border-primary/40 hover:bg-muted/50 transition-all group"
         >
           <div className="p-2.5 rounded-md bg-primary/10 text-primary">
-            <Linkedin size={18} />
+            <FaLinkedin size={18} />
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium mb-0.5">LinkedIn</p>
@@ -56,7 +57,7 @@ export default function Contact() {
           className="flex items-center gap-4 p-4 border border-border rounded-lg bg-card hover:border-primary/40 hover:bg-muted/50 transition-all group"
         >
           <div className="p-2.5 rounded-md bg-primary/10 text-primary">
-            <Github size={18} />
+            <FaGithub size={18} />
           </div>
           <div>
             <p className="text-xs text-muted-foreground font-medium mb-0.5">GitHub</p>

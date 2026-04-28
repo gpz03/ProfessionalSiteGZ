@@ -1,5 +1,6 @@
 import { Link } from "wouter";
-import { ArrowRight, Github, Linkedin, ExternalLink, Server, Activity, Shield, Terminal } from "lucide-react";
+import { ArrowRight, ExternalLink, Server, Activity, Shield, Terminal } from "lucide-react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { person, highlights, projects } from "@/data/resume";
 
 export default function Home() {
@@ -42,7 +43,7 @@ export default function Home() {
               data-testid="cta-github"
               className="inline-flex items-center gap-2 px-6 py-3 border-2 border-border rounded-md text-sm font-medium text-foreground hover:border-primary/50 hover:bg-muted/50 transition-all shadow-2xs hover:shadow-sm"
             >
-              <Github size={16} /> GitHub
+              <FaGithub size={16} /> GitHub
             </a>
             <a
               href={person.linkedin}
@@ -51,7 +52,7 @@ export default function Home() {
               data-testid="cta-linkedin"
               className="inline-flex items-center gap-2 px-6 py-3 border-2 border-border rounded-md text-sm font-medium text-foreground hover:border-primary/50 hover:bg-muted/50 transition-all shadow-2xs hover:shadow-sm"
             >
-              <Linkedin size={16} /> LinkedIn
+              <FaLinkedin size={16} /> LinkedIn
             </a>
           </div>
         </div>

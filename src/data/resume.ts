@@ -40,23 +40,24 @@ export const projects = [
   },
   {
     id: "cloud-lab",
-    title: "Cloud Infrastructure Lab",
-    status: "Planned",
+    title: "Azure Cloud Deployment & CI/CD",
+    status: "Completed",
     overview:
-      "A planned project to deploy and manage cloud-based virtual machines and networking infrastructure to gain hands-on cloud administration skills.",
+      "Engineered an automated CI/CD pipeline to deploy this React portfolio to Microsoft Azure using GitHub Actions and Azure Static Web Apps.",
     goal:
-      "Build foundational cloud skills in VM deployment, security configuration, and remote administration.",
-    technologies: ["Microsoft Azure (planned)", "Azure Virtual Machines", "Network Security Groups", "Remote Desktop / SSH"],
+      "Build hands-on cloud administration skills by deploying a real-world application to enterprise cloud infrastructure using zero-cost cloud patterns.",
+    technologies: ["Microsoft Azure", "Azure Static Web Apps", "GitHub Actions", "CI/CD Pipeline", "Azure CLI"],
     whatIDid: [
-      "VM deployment and configuration planning",
-      "Firewall and security configuration design",
-      "Remote access setup strategy",
+      "Provisioned Azure Static Web App resources via the Azure CLI",
+      "Configured a GitHub Actions workflow for automated continuous integration and deployment",
+      "Managed Azure deployment secrets securely within GitHub",
+      "Successfully routed and hosted a modern SPA (Single Page Application) on Microsoft's global edge network",
     ],
-    result: "Planned — infrastructure design underway.",
+    result: "Completed — Portfolio successfully deployed to Azure with an automated build pipeline.",
     takeaways: [
-      "Cloud networking concepts (VNets, subnets, NSGs)",
-      "VM provisioning and management in a cloud environment",
-      "Secure remote access configurations",
+      "Practical experience with Azure CLI and cloud resource provisioning",
+      "Understanding of CI/CD automation and GitHub Actions integration",
+      "Implementing cost-effective (zero-cost) enterprise cloud architectures",
     ],
   },
   {

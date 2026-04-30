@@ -9,6 +9,7 @@ import Skills from "@/pages/skills";
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import Nav from "@/components/Nav";
+import DeploymentBadge from "@/components/DeploymentBadge";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function App() {
       <WouterRouter base={routerBase}>
         <Router />
       </WouterRouter>
+      <DeploymentBadge />
       <Toaster />
     </TooltipProvider>
   );

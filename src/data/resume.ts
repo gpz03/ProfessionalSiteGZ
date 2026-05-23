@@ -19,24 +19,24 @@ export const projects = [
   {
     id: "ad-homelab",
     title: "Active Directory Home Lab",
-    status: "In Progress",
+    status: "Completed",
     overview:
-      "Building a bare-metal Type-1 hypervisor using Proxmox VE to host a virtual Windows Server environment with domain services, simulating a real enterprise IT infrastructure.",
+      "Built a bare-metal Type-1 hypervisor using Proxmox VE hosting a virtual Windows Server domain controller and Active Directory environment, equipped with a live frontend query tool to inspect system accounts and active services in real time.",
     goal:
-      "Practice hands-on enterprise virtualization and Active Directory administration outside of a production setting to build job-ready infrastructure skills.",
-    technologies: ["Proxmox VE", "Windows Server 2022", "Active Directory", "Group Policy"],
+      "Practice hands-on enterprise virtualization, Active Directory administration, and operating system audits through secure, live integrations.",
+    technologies: ["Proxmox VE", "Windows Server 2022", "Active Directory", "PowerShell Cmdlets", "System Auditing"],
     whatIDid: [
       "Provisioned a bare-metal Proxmox Virtual Environment (PVE)",
-      "Setting up a virtualized Windows Server domain controller",
-      "Configuring Active Directory Domain Services (AD DS)",
-      "Creating organizational units (OUs) and user accounts",
-      "Applying Group Policy Objects (GPOs) for security and configuration settings",
+      "Set up a virtualized Windows Server domain controller and configured Active Directory Domain Services (AD DS)",
+      "Built an OS-level query endpoint using PowerShell child-processes to fetch active domain users, running processes, and network setups",
+      "Designed a real-time frontend Directory Explorer allowing visitors to execute active audits on the hosting server",
+      "Configured Group Policy Objects (GPOs) and organizational units (OUs) for system hardening"
     ],
-    result: "In progress — environment standing up with AD DS and basic OU structure in place.",
+    result: "Completed — AD DS environment fully deployed and integrated with live query tools on this portfolio.",
     takeaways: [
-      "Deep familiarity with Windows Server roles and features",
-      "Practical understanding of enterprise domain architecture",
-      "Experience diagnosing virtualization and DNS issues",
+      "Deep familiarity with Windows Server roles, AD DS administration, and domain architecture",
+      "Executing safe, read-only administrative PowerShell scripts via API endpoints",
+      "Diagnosing network virtualization, DHCP, DNS, and secure directory services"
     ],
   },
   {
@@ -44,21 +44,21 @@ export const projects = [
     title: "Azure Cloud Deployment & CI/CD",
     status: "Completed",
     overview:
-      "Engineered an automated CI/CD pipeline to deploy this React portfolio to Microsoft Azure using GitHub Actions and Azure Static Web Apps.",
+      "Engineered an automated CI/CD pipeline deploying this React portfolio to Azure using GitHub Actions and Azure Static Web Apps, integrated with a live continuous deployment Guestbook that commits signatures to GitHub via the REST API.",
     goal:
-      "Build hands-on cloud administration skills by deploying a real-world application to enterprise cloud infrastructure using zero-cost cloud patterns.",
-    technologies: ["Microsoft Azure", "Azure Static Web Apps", "GitHub Actions", "CI/CD Pipeline", "Azure CLI"],
+      "Build hands-on CI/CD automation skills by enabling visitors to trigger, track, and verify a real deployment pipeline run in real time.",
+    technologies: ["Microsoft Azure", "Azure Static Web Apps", "GitHub Actions", "GitHub REST API", "CI/CD Pipeline"],
     whatIDid: [
       "Provisioned Azure Static Web App resources via the Azure CLI",
       "Configured a GitHub Actions workflow for automated continuous integration and deployment",
-      "Managed Azure deployment secrets securely within GitHub",
-      "Successfully routed and hosted a modern SPA (Single Page Application) on Microsoft's global edge network",
+      "Implemented a secure write-back API utilizing GitHub's Contents API to append visitor signatures directly to repository files",
+      "Built a live pipeline tracker showing the workflow run's progress (Queued, Building, Deploying) and active logs directly from GitHub API"
     ],
-    result: "Completed — Portfolio successfully deployed to Azure with an automated build pipeline.",
+    result: "Completed — Pipeline fully integrated with a secure guestbook commit deployment visualizer.",
     takeaways: [
-      "Practical experience with Azure CLI and cloud resource provisioning",
-      "Understanding of CI/CD automation and GitHub Actions integration",
-      "Implementing cost-effective (zero-cost) enterprise cloud architectures",
+      "Designing automated CI/CD workflows and secure Git write-back integrations",
+      "Managing deployment secrets and securing API write scopes (XSS prevention and rate limiting)",
+      "Implementing cost-effective (zero-cost) enterprise cloud deployment structures"
     ],
   },
   {

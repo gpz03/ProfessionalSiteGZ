@@ -1,8 +1,9 @@
 import { projects } from "@/data/resume";
 import { Terminal, CheckCircle2, CircleDashed } from "lucide-react";
-import AzurePlayground from "@/components/AzurePlayground";
 import ProxmoxLabViewer from "@/components/ProxmoxLabViewer";
 import NasExplorer from "@/components/NasExplorer";
+import ActiveDirectoryExplorer from "@/components/ActiveDirectoryExplorer";
+import PipelineVisualizer from "@/components/PipelineVisualizer";
 
 export default function Projects() {
   return (
@@ -124,13 +125,14 @@ export default function Projects() {
 
             {p.id === "cloud-lab" && (
               <div className="relative z-10 mt-8 pt-8 border-t border-border/40">
-                <AzurePlayground />
+                <PipelineVisualizer />
               </div>
             )}
 
             {p.id === "ad-homelab" && (
-              <div className="relative z-10 mt-8 pt-8 border-t border-border/40">
+              <div className="relative z-10 mt-8 pt-8 border-t border-border/40 space-y-8">
                 <ProxmoxLabViewer />
+                <ActiveDirectoryExplorer />
               </div>
             )}
 

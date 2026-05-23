@@ -359,8 +359,8 @@ export default function NasExplorer() {
           </div>
           <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
             {mode === "owner" 
-              ? "Persistent Owner Drive unlocked: Storage capacity limit disabled. Files are securely persisted on your home server's NAS share." 
-              : "Demo Guest Drive enabled: Total capacity shared among site users is limited to 1GB. Public files are saved in transient container space."}
+              ? "Persistent Owner Drive unlocked: Storage capacity limit disabled. Files are stored privately and permanently on your home server's NAS partition." 
+              : "Shared Public Sandbox: Files uploaded in Guest Mode are visible to all visitors and share a collective 1GB quota. Files are saved in a transient partition and can be deleted by any visitor."}
           </p>
         </div>
 

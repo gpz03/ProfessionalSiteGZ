@@ -2,6 +2,7 @@ import { projects } from "@/data/resume";
 import { Terminal, CheckCircle2, CircleDashed } from "lucide-react";
 import AzurePlayground from "@/components/AzurePlayground";
 import ProxmoxLabViewer from "@/components/ProxmoxLabViewer";
+import NasExplorer from "@/components/NasExplorer";
 
 export default function Projects() {
   return (
@@ -130,6 +131,12 @@ export default function Projects() {
             {p.id === "ad-homelab" && (
               <div className="relative z-10 mt-8 pt-8 border-t border-border/40">
                 <ProxmoxLabViewer />
+              </div>
+            )}
+
+            {p.id === "nas-storage" && (
+              <div className="relative z-10 mt-8 pt-8 border-t border-border/40">
+                <NasExplorer />
               </div>
             )}
           </article>

@@ -62,6 +62,29 @@ export const projects = [
     ],
   },
   {
+    id: "nas-storage",
+    title: "Personal NAS Cloud Storage",
+    status: "Completed",
+    overview:
+      "Configured a Network Attached Storage (NAS) file storage server integrated with the portfolio site, letting users upload, browse, download, and manage files under a 1GB quota, while providing secure, unlimited persistent storage for the administrator.",
+    goal:
+      "Demonstrate hands-on storage area network (SAN) and NAS concepts, API-based file management, role-based authorization, and storage quota enforcement.",
+    technologies: ["Node.js", "Azure Functions", "File APIs", "Storage Quota System", "Vanilla CSS"],
+    whatIDid: [
+      "Implemented a file upload/download API endpoint in Azure Functions",
+      "Designed a storage quota calculation module enforcing 1GB total limits for guests",
+      "Created an Owner Mode allowing password-authenticated administrative access to a separate personal directory",
+      "Built a responsive NAS explorer frontend with upload/download/delete controls",
+      "Added real-time capacity monitoring and validation warnings"
+    ],
+    result: "Completed — NAS file explorer live on the site with 1GB quota limit and Owner Mode.",
+    takeaways: [
+      "Handling multipart file uploads in serverless endpoints",
+      "Implementing storage volume calculation and quota enforcement",
+      "Building secure file explorer frontends with authorization headers",
+    ],
+  },
+  {
     id: "automation-scripts",
     title: "PowerShell Automation Scripts",
     status: "Planned",

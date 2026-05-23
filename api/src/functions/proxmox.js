@@ -7,13 +7,27 @@ let lastFetch = 0;
 const CACHE_TTL = 60000; // 60 seconds
 
 app.http('proxmox', {
-    methods: ['GET'],
+    methods: ['GET', 'OPTIONS'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
+        const corsHeaders = {
+            'Access-Control-Allow-Origin': 'https://gpz03.github.io',
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, ngrok-skip-browser-warning'
+        };
+
+        if (request.method === 'OPTIONS') {
+            return {
+                status: 204,
+                headers: corsHeaders
+            };
+        }
+
         const now = Date.now();
         if (cachedData && (now - lastFetch) < CACHE_TTL) {
             return {
                 status: 200,
+                headers: corsHeaders,
                 jsonBody: cachedData
             };
         }
@@ -25,6 +39,7 @@ app.http('proxmox', {
         if (!proxmoxUrl || !tokenId || !secret) {
             return {
                 status: 503,
+                headers: corsHeaders,
                 jsonBody: {
                     error: "Proxmox connection not configured. Missing environment variables."
                 }
@@ -102,6 +117,7 @@ app.http('proxmox', {
 
             return {
                 status: 200,
+                headers: corsHeaders,
                 jsonBody: result
             };
 
@@ -109,6 +125,7 @@ app.http('proxmox', {
             context.error("Proxmox API Error:", error.message);
             return {
                 status: 500,
+                headers: corsHeaders,
                 jsonBody: {
                     error: "Failed to fetch data from Proxmox server."
                 }

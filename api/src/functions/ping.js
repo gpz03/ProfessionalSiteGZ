@@ -31,7 +31,8 @@ app.http('ping', {
                 region: region,
                 architecture: process.arch,
                 platform: process.platform,
-                nodeVersion: process.version
+                nodeVersion: process.version,
+                githubPatConfigured: !!process.env.GITHUB_PAT
             }
         };
     }

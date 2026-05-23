@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Server, Activity, HardDrive, Cpu, Loader2, Play, Square, AlertCircle, RefreshCw } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 interface ProxmoxVM {
   vmid: number;
@@ -34,7 +35,7 @@ export default function ProxmoxLabViewer() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/proxmox");
+      const res = await fetch(getApiUrl("/api/proxmox"));
       if (!res.ok) {
         if (res.status === 503) {
           throw new Error("Proxmox API credentials not configured in Azure.");

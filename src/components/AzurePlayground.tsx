@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Server, Activity, ArrowRight, Loader2 } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 export default function AzurePlayground() {
   const [response, setResponse] = useState<string | null>(null);
@@ -10,7 +11,7 @@ export default function AzurePlayground() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/ping");
+      const res = await fetch(getApiUrl("/api/ping"));
       if (!res.ok) {
         throw new Error(`Server responded with status ${res.status}`);
       }

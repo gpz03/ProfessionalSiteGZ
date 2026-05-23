@@ -39,7 +39,8 @@ app.http('proxmox', {
                     const options = {
                         method: 'GET',
                         headers: {
-                            'Authorization': `PVEAPIToken=${tokenId}=${secret}`
+                            'Authorization': `PVEAPIToken=${tokenId}=${secret}`,
+                            'ngrok-skip-browser-warning': 'true'
                         },
                         rejectUnauthorized: false // Required for default Proxmox self-signed certs
                     };

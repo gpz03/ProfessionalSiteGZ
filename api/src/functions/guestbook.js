@@ -199,32 +199,68 @@ app.http('guestbook', {
                     context.log("Guestbook entry successfully committed to GitHub. Workflow triggered.");
 
                 } else {
-                    // Local File Mode (for dev environment)
-                    context.log("GitHub PAT not configured. Writing to local file...");
+                    // Local File Mode (for dev environment) or Fallback for Cloud Read-Only filesystems
+                    context.log("GitHub PAT not configured. Using local/temporary file fallback...");
+                    const os = require('os');
                     
-                    if (fs.existsSync(localPath)) {
-                        const content = fs.readFileSync(localPath, 'utf8');
-                        currentEntries = JSON.parse(content);
+                    let targetPath = localPath;
+                    let isFallback = false;
+                    
+                    // Check if we can write to the local directory, otherwise use tmp
+                    try {
+                        const dir = path.dirname(localPath);
+                        if (!fs.existsSync(dir)) {
+                            fs.mkdirSync(dir, { recursive: true });
+                        }
+                        const testFile = path.join(dir, '.test_write');
+                        fs.writeFileSync(testFile, 'test');
+                        fs.unlinkSync(testFile);
+                    } catch (e) {
+                        targetPath = path.join(os.tmpdir(), 'guestbook.json');
+                        isFallback = true;
+                        context.log(`Local directory is read-only. Falling back to: ${targetPath}`);
                     }
-                    
+
+                    if (fs.existsSync(targetPath)) {
+                        try {
+                            const content = fs.readFileSync(targetPath, 'utf8');
+                            currentEntries = JSON.parse(content);
+                        } catch (e) {
+                            context.error("Failed to parse existing guestbook file:", e.message);
+                        }
+                    } else if (isFallback) {
+                        // In fallback mode, if tmp file doesn't exist, we can try reading from the local source file (read-only)
+                        // to populate the initial entries
+                        if (fs.existsSync(localPath)) {
+                            try {
+                                const content = fs.readFileSync(localPath, 'utf8');
+                                currentEntries = JSON.parse(content);
+                            } catch (e) {}
+                        }
+                    }
+
                     currentEntries.push(newEntry);
                     if (currentEntries.length > 100) {
                         currentEntries = currentEntries.slice(-100);
                     }
 
-                    // Ensure target directory exists
-                    const dir = path.dirname(localPath);
-                    if (!fs.existsSync(dir)) {
-                        fs.mkdirSync(dir, { recursive: true });
+                    try {
+                        const dir = path.dirname(targetPath);
+                        if (!fs.existsSync(dir)) {
+                            fs.mkdirSync(dir, { recursive: true });
+                        }
+                        fs.writeFileSync(targetPath, JSON.stringify(currentEntries, null, 2), 'utf8');
+                    } catch (err) {
+                        throw new Error("Local/fallback write failed: " + err.message);
                     }
-
-                    fs.writeFileSync(localPath, JSON.stringify(currentEntries, null, 2), 'utf8');
                 }
 
                 return addCors({
                     status: 200,
                     jsonBody: {
-                        message: "Signature added successfully!",
+                        message: githubPat 
+                            ? "Signature added successfully!" 
+                            : "Signature saved temporarily! Please configure GITHUB_PAT on Azure to enable real CD pipeline deployments.",
                         entry: newEntry,
                         pipelineTriggered: !!githubPat
                     }

@@ -1,7 +1,12 @@
 {
-  "globalHeaders": {
-    "Access-Control-Allow-Origin": "https://gpz03.github.io",
-    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, ngrok-skip-browser-warning"
-  }
+  "routes": [
+    {
+      "route": "/api/*",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, ngrok-skip-browser-warning"
+      }
+    }
+  ]
 }

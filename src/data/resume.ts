@@ -21,11 +21,12 @@ export const projects = [
     title: "Active Directory Home Lab",
     status: "In Progress",
     overview:
-      "Building a virtual Windows Server environment with domain services, user management, and Group Policy to simulate a real enterprise IT environment.",
+      "Building a bare-metal Type-1 hypervisor using Proxmox VE to host a virtual Windows Server environment with domain services, simulating a real enterprise IT infrastructure.",
     goal:
-      "Practice hands-on Active Directory administration outside of a production setting to build job-ready skills in domain management and enterprise configuration.",
-    technologies: ["Windows Server 2022", "Hyper-V / VirtualBox", "Active Directory", "Group Policy Management Console"],
+      "Practice hands-on enterprise virtualization and Active Directory administration outside of a production setting to build job-ready infrastructure skills.",
+    technologies: ["Proxmox VE", "Windows Server 2022", "Active Directory", "Group Policy"],
     whatIDid: [
+      "Provisioned a bare-metal Proxmox Virtual Environment (PVE)",
       "Setting up a virtualized Windows Server domain controller",
       "Configuring Active Directory Domain Services (AD DS)",
       "Creating organizational units (OUs) and user accounts",

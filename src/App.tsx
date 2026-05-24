@@ -3,11 +3,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
-import Projects from "@/pages/projects";
-import Experience from "@/pages/experience";
-import Skills from "@/pages/skills";
-import About from "@/pages/about";
-import Contact from "@/pages/contact";
 import Nav from "@/components/Nav";
 import DeploymentBadge from "@/components/DeploymentBadge";
 
@@ -17,11 +12,11 @@ function Router() {
       <Nav />
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/projects" component={Projects} />
-        <Route path="/experience" component={Experience} />
-        <Route path="/skills" component={Skills} />
-        <Route path="/about" component={About} />
-        <Route path="/contact" component={Contact} />
+        <Route path="/projects" component={Home} />
+        <Route path="/experience" component={Home} />
+        <Route path="/skills" component={Home} />
+        <Route path="/about" component={Home} />
+        <Route path="/contact" component={Home} />
         <Route component={NotFound} />
       </Switch>
     </>

@@ -6,7 +6,7 @@ import {
   Shield, Cpu, HardDrive, Play, ArrowRight, ExternalLink
 } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { person, highlights, projects, experience, skills, education, courses, additionalExperience, personalProjects } from "@/data/resume";
+import { person, projects, experience, skills, education, courses, additionalExperience, personalProjects } from "@/data/resume";
 import ProxmoxLabViewer from "@/components/ProxmoxLabViewer";
 import ActiveDirectoryExplorer from "@/components/ActiveDirectoryExplorer";
 import NasExplorer from "@/components/NasExplorer";
@@ -14,22 +14,11 @@ import PipelineVisualizer from "@/components/PipelineVisualizer";
 
 export default function Home() {
   const [location, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"hypervisor" | "storage" | "cicd">("hypervisor");
-  const [labView, setLabView] = useState<"console" | "docs">("console");
   const [isResumeExpanded, setIsResumeExpanded] = useState<boolean>(false);
 
   // Sync wouter URLs with dashboard state
   useEffect(() => {
-    if (location === "/" || location === "/projects") {
-      setActiveTab("hypervisor");
-      setLabView("console");
-    } else if (location.startsWith("/projects/")) {
-      const sub = location.replace("/projects/", "");
-      if (sub === "hypervisor" || sub === "storage" || sub === "cicd") {
-        setActiveTab(sub);
-        setLabView("console");
-      }
-    } else if (["/experience", "/skills", "/about", "/contact"].includes(location)) {
+    if (["/experience", "/skills", "/about", "/contact"].includes(location)) {
       setIsResumeExpanded(true);
       // Wait for state expansion update, then scroll smoothly to the target section
       setTimeout(() => {
@@ -39,28 +28,26 @@ export default function Home() {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }, 150);
+    } else if (location === "/projects") {
+      // Scroll to first lab project
+      const element = document.getElementById("ad-homelab-section");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   }, [location]);
-
-  const handleTabChange = (tab: "hypervisor" | "storage" | "cicd") => {
-    setActiveTab(tab);
-    setLabView("console");
-    setLocation(`/projects/${tab}`, { replace: true });
-  };
 
   // Find project details from resume data
   const getProjectData = (id: string) => {
     return projects.find((p) => p.id === id);
   };
 
-  const currentProject = activeTab === "hypervisor" 
-    ? getProjectData("ad-homelab") 
-    : activeTab === "storage" 
-      ? getProjectData("nas-storage") 
-      : getProjectData("cloud-lab");
+  const adProject = getProjectData("ad-homelab");
+  const nasProject = getProjectData("nas-storage");
+  const cicdProject = getProjectData("cloud-lab");
 
   return (
-    <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 flex flex-col gap-10 min-h-[calc(100vh-4rem)]">
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 flex flex-col gap-16 min-h-[calc(100vh-4rem)]">
       
       {/* 1. HERO HEADER */}
       <section className="relative border border-border/50 rounded-2xl bg-card/40 backdrop-blur-md p-6 sm:p-8 overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-6 duration-500">
@@ -108,162 +95,161 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. INTERACTIVE LAB WORKSPACE */}
-      <section className="flex flex-col border border-border/60 rounded-2xl bg-card overflow-hidden shadow-md animate-in fade-in slide-in-from-bottom-8 duration-600 ease-out fill-mode-both">
-        
-        {/* Lab Workspace Tab bar */}
-        <div className="flex flex-col sm:flex-row border-b border-border/50 bg-muted/30">
-          <button
-            onClick={() => handleTabChange("hypervisor")}
-            className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-xs font-mono font-bold uppercase tracking-wider border-b-2 sm:border-b-0 sm:border-r border-border/40 transition-all ${
-              activeTab === "hypervisor"
-                ? "bg-background text-primary border-primary border-b-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
-          >
-            <Server size={14} /> Hypervisor & AD Lab
-          </button>
-          
-          <button
-            onClick={() => handleTabChange("storage")}
-            className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-xs font-mono font-bold uppercase tracking-wider border-b-2 sm:border-b-0 sm:border-r border-border/40 transition-all ${
-              activeTab === "storage"
-                ? "bg-background text-primary border-primary border-b-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
-          >
-            <HardDrive size={14} /> Personal NAS Storage
-          </button>
-          
-          <button
-            onClick={() => handleTabChange("cicd")}
-            className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-xs font-mono font-bold uppercase tracking-wider border-b-2 sm:border-b-0 transition-all ${
-              activeTab === "cicd"
-                ? "bg-background text-primary border-primary border-b-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-            }`}
-          >
-            <Play size={14} /> CI/CD Build Pipeline
-          </button>
-        </div>
+      {/* 2. LABS LIST (SCROLL VIEW WITH EXPLANATIONS WOVEN IN) */}
+      <div className="flex flex-col gap-20">
 
-        {/* Tab Controls (Console vs Docs toggle) */}
-        <div className="px-6 pt-6 flex justify-between items-center border-b border-border/20">
-          <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
-            {activeTab === "hypervisor" 
-              ? "Lab 01: Hypervisor Virt & Active Directory" 
-              : activeTab === "storage" 
-                ? "Lab 02: Network Attached Cloud Storage" 
-                : "Lab 03: Live CI/CD Pipeline Automation"}
-          </span>
+        {/* LAB 1: HYPERVISOR & ACTIVE DIRECTORY */}
+        {adProject && (
+          <section id="ad-homelab-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
+            {/* Left Column: Woven Explanation */}
+            <div className="lg:col-span-4 space-y-6">
+              <div>
+                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 01 / Hypervisor Virt & AD</p>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{adProject.title}</h2>
+              </div>
 
-          <div className="flex border border-border rounded-md overflow-hidden bg-muted/40 p-0.5 mb-2">
-            <button
-              onClick={() => setLabView("console")}
-              className={`px-3 py-1 text-[10px] font-mono font-bold rounded transition-colors ${
-                labView === "console"
-                  ? "bg-background text-primary shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              LIVE CONSOLE
-            </button>
-            <button
-              onClick={() => setLabView("docs")}
-              className={`px-3 py-1 text-[10px] font-mono font-bold rounded transition-colors ${
-                labView === "docs"
-                  ? "bg-background text-primary shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              LAB SPECS
-            </button>
-          </div>
-        </div>
-
-        {/* Tab View Contents */}
-        <div className="p-6">
-          {labView === "console" ? (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              {activeTab === "hypervisor" && (
-                <div className="space-y-8">
-                  <ProxmoxLabViewer />
-                  <ActiveDirectoryExplorer />
+              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <p>{adProject.overview}</p>
+                
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-1">Goal</h4>
+                  <p>{adProject.goal}</p>
                 </div>
-              )}
-              {activeTab === "storage" && <NasExplorer />}
-              {activeTab === "cicd" && <PipelineVisualizer />}
+
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Technologies Used</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {adProject.technologies.map((t) => (
+                      <span key={t} className="text-[9px] font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-foreground">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Achievements</h4>
+                  <ul className="space-y-1.5">
+                    {adProject.whatIDid.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs">
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/70 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-8 animate-in fade-in duration-300 max-w-3xl">
-              {currentProject && (
-                <>
-                  <div>
-                    <h3 className="text-sm font-mono font-bold tracking-widest uppercase text-primary mb-2">
-                      Overview
-                    </h3>
-                    <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
-                      {currentProject.overview}
-                    </p>
-                  </div>
 
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="text-sm font-mono font-bold tracking-widest uppercase text-primary mb-2">
-                        Goal
-                      </h3>
-                      <p className="text-sm text-foreground/90 leading-relaxed">
-                        {currentProject.goal}
-                      </p>
-                    </div>
-
-                    <div>
-                      <h3 className="text-sm font-mono font-bold tracking-widest uppercase text-primary mb-2">
-                        Technologies Deployed
-                      </h3>
-                      <div className="flex flex-wrap gap-1.5 mt-2">
-                        {currentProject.technologies.map((t) => (
-                          <span key={t} className="text-[10px] font-mono bg-muted/60 border border-border px-2 py-0.5 rounded text-foreground">
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-mono font-bold tracking-widest uppercase text-primary mb-3">
-                      Core Actions Executed
-                    </h3>
-                    <ul className="grid sm:grid-cols-2 gap-3">
-                      {currentProject.whatIDid.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-foreground/80 leading-relaxed">
-                          <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/70 flex-shrink-0" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="p-4 rounded-lg bg-muted/30 border border-border/40">
-                    <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                      Key Takeaways & Lessons
-                    </h3>
-                    <ul className="space-y-2">
-                      {currentProject.takeaways.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
-                          <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground flex-shrink-0" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </>
-              )}
+            {/* Right Column: Live Interactables */}
+            <div className="lg:col-span-8 space-y-6">
+              <ProxmoxLabViewer />
+              <ActiveDirectoryExplorer />
             </div>
-          )}
-        </div>
-      </section>
+          </section>
+        )}
+
+        {/* LAB 2: PERSONAL NAS STORAGE */}
+        {nasProject && (
+          <section id="nas-storage-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
+            {/* Left Column: Woven Explanation */}
+            <div className="lg:col-span-4 space-y-6">
+              <div>
+                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 02 / Network File Storage</p>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{nasProject.title}</h2>
+              </div>
+
+              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <p>{nasProject.overview}</p>
+                
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-1">Goal</h4>
+                  <p>{nasProject.goal}</p>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Technologies Used</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {nasProject.technologies.map((t) => (
+                      <span key={t} className="text-[9px] font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-foreground">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Achievements</h4>
+                  <ul className="space-y-1.5">
+                    {nasProject.whatIDid.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs">
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/70 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Live NAS Explorer */}
+            <div className="lg:col-span-8">
+              <NasExplorer />
+            </div>
+          </section>
+        )}
+
+        {/* LAB 3: CI/CD DEPLOYMENT PIPELINE */}
+        {cicdProject && (
+          <section id="cloud-lab-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
+            {/* Left Column: Woven Explanation */}
+            <div className="lg:col-span-4 space-y-6">
+              <div>
+                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 03 / Automation Pipeline</p>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{cicdProject.title}</h2>
+              </div>
+
+              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <p>{cicdProject.overview}</p>
+                
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-1">Goal</h4>
+                  <p>{cicdProject.goal}</p>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Technologies Used</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {cicdProject.technologies.map((t) => (
+                      <span key={t} className="text-[9px] font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-foreground">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Achievements</h4>
+                  <ul className="space-y-1.5">
+                    {cicdProject.whatIDid.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs">
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/70 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Live CD Visualizer */}
+            <div className="lg:col-span-8">
+              <PipelineVisualizer />
+            </div>
+          </section>
+        )}
+
+      </div>
 
       {/* 3. PROFILE & EXPERIENCE ACCORDION */}
       <section className="border border-border/60 rounded-2xl bg-card/60 backdrop-blur-md overflow-hidden shadow-sm animate-in fade-in duration-500 delay-150 fill-mode-both">

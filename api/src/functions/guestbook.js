@@ -57,6 +57,15 @@ app.http('guestbook', {
         // --- GET METHOD ---
         if (request.method === 'GET') {
             try {
+                const os = require('os');
+                const fallbackPath = path.join(os.tmpdir(), 'guestbook.json');
+                
+                // If a temporary fallback file exists in SWA runtime, read it first
+                if (fs.existsSync(fallbackPath)) {
+                    const content = fs.readFileSync(fallbackPath, 'utf8');
+                    return addCors({ status: 200, jsonBody: JSON.parse(content) });
+                }
+
                 // If running locally, we can read local guestbook.json
                 if (fs.existsSync(localPath)) {
                     const content = fs.readFileSync(localPath, 'utf8');

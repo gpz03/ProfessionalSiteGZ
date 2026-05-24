@@ -101,11 +101,17 @@ export default function PowerShellConsole() {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [progress, setProgress] = useState<{ percent: number; status: string } | null>(null);
   
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+  const consoleScreenRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll terminal to bottom
+  // Auto-scroll terminal to bottom internally (avoiding browser scrollIntoView page jitter)
   useEffect(() => {
-    terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = consoleScreenRef.current;
+    if (el) {
+      const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 150;
+      if (isNearBottom) {
+        el.scrollTop = el.scrollHeight;
+      }
+    }
   }, [terminalLines]);
 
   const executeScript = async () => {
@@ -196,7 +202,7 @@ export default function PowerShellConsole() {
   return (
     <div className="w-full flex flex-col xl:flex-row gap-6 items-stretch">
       {/* Script Panel / Code Viewer */}
-      <div className="xl:w-[42%] flex flex-col border border-border/50 rounded-xl bg-card/60 backdrop-blur-md overflow-hidden">
+      <div className="xl:w-[42%] flex flex-col border border-border/50 rounded-xl bg-card/60 backdrop-blur-md overflow-hidden h-[450px] xl:h-[520px]">
         {/* Header Tab */}
         <div className="border-b border-border/40 bg-muted/20 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -240,11 +246,11 @@ export default function PowerShellConsole() {
         </div>
 
         {/* Live Code Viewer */}
-        <div className="flex-1 flex flex-col bg-muted/5">
+        <div className="flex-1 flex flex-col bg-muted/5 min-h-0">
           <div className="bg-muted/10 px-4 py-2 border-b border-border/20 flex items-center justify-between">
             <span className="text-[10px] font-mono text-muted-foreground">Preview: {SCRIPTS_DB[selectedScript].title}</span>
           </div>
-          <div className="flex-1 p-4 font-mono text-[11px] leading-relaxed text-foreground/80 overflow-y-auto max-h-[250px] xl:max-h-none xl:h-[220px]">
+          <div className="flex-1 p-4 font-mono text-[11px] leading-relaxed text-foreground/80 overflow-y-auto select-all">
             <pre className="whitespace-pre-wrap select-all">
               {SCRIPTS_DB[selectedScript].code.split("\n").map((line, idx) => {
                 let colorClass = "text-foreground/80";
@@ -268,7 +274,7 @@ export default function PowerShellConsole() {
       </div>
 
       {/* Terminal Widget */}
-      <div className="flex-1 flex flex-col border border-border/50 rounded-xl overflow-hidden shadow-2xl bg-[#012456] text-white">
+      <div className="flex-1 flex flex-col border border-border/50 rounded-xl overflow-hidden shadow-2xl bg-[#012456] text-white h-[450px] xl:h-[520px]">
         {/* Terminal Header */}
         <div className="bg-[#001735] px-4 py-2.5 flex items-center justify-between border-b border-[#012456]/40 select-none">
           <div className="flex items-center gap-2">
@@ -302,7 +308,7 @@ export default function PowerShellConsole() {
         )}
 
         {/* Console Screen */}
-        <div className="flex-1 p-4 font-mono text-xs overflow-y-auto h-[320px] xl:h-[400px] leading-relaxed select-text space-y-1">
+        <div ref={consoleScreenRef} className="flex-1 p-4 font-mono text-xs overflow-y-auto leading-relaxed select-text space-y-1">
           {terminalLines.map((line, idx) => {
             let colorClass = "text-slate-100";
             let prefix = "";
@@ -323,7 +329,6 @@ export default function PowerShellConsole() {
               </div>
             );
           })}
-          <div ref={terminalEndRef} />
         </div>
 
         {/* Console Footer / Trigger Button */}

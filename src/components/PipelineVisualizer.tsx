@@ -283,7 +283,7 @@ export default function PipelineVisualizer() {
             </p>
           ) : (
             <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
-              {entries.map((entry, index) => (
+              {[...entries].reverse().map((entry, index) => (
                 <div key={index} className="p-3 rounded-lg border border-border/50 bg-muted/10 flex flex-col gap-1">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-foreground">{entry.name}</span>

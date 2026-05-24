@@ -30,7 +30,7 @@ export default function Home() {
       }, 150);
     } else if (location === "/projects") {
       // Scroll to first lab project
-      const element = document.getElementById("ad-homelab-section");
+      const element = document.getElementById("cloud-lab-section");
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -98,28 +98,28 @@ export default function Home() {
       {/* 2. LABS LIST (SCROLL VIEW WITH EXPLANATIONS WOVEN IN) */}
       <div className="flex flex-col gap-20">
 
-        {/* LAB 1: HYPERVISOR & ACTIVE DIRECTORY */}
-        {adProject && (
-          <section id="ad-homelab-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
+        {/* LAB 1: CI/CD DEPLOYMENT PIPELINE */}
+        {cicdProject && (
+          <section id="cloud-lab-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
             {/* Left Column: Woven Explanation */}
             <div className="lg:col-span-4 space-y-6">
               <div>
-                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 01 / Hypervisor Virt & AD</p>
-                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{adProject.title}</h2>
+                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 01 / Automation Pipeline</p>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{cicdProject.title}</h2>
               </div>
 
               <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-                <p>{adProject.overview}</p>
+                <p>{cicdProject.overview}</p>
                 
                 <div>
                   <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-1">Goal</h4>
-                  <p>{adProject.goal}</p>
+                  <p>{cicdProject.goal}</p>
                 </div>
 
                 <div>
                   <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Technologies Used</h4>
                   <div className="flex flex-wrap gap-1">
-                    {adProject.technologies.map((t) => (
+                    {cicdProject.technologies.map((t) => (
                       <span key={t} className="text-[9px] font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-foreground">
                         {t}
                       </span>
@@ -130,7 +130,7 @@ export default function Home() {
                 <div className="pt-2">
                   <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Achievements</h4>
                   <ul className="space-y-1.5">
-                    {adProject.whatIDid.map((item, i) => (
+                    {cicdProject.whatIDid.map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs">
                         <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/70 flex-shrink-0" />
                         <span>{item}</span>
@@ -141,10 +141,9 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Column: Live Interactables */}
-            <div className="lg:col-span-8 space-y-6">
-              <ProxmoxLabViewer />
-              <ActiveDirectoryExplorer />
+            {/* Right Column: Live CD Visualizer */}
+            <div className="lg:col-span-8">
+              <PipelineVisualizer />
             </div>
           </section>
         )}
@@ -199,28 +198,28 @@ export default function Home() {
           </section>
         )}
 
-        {/* LAB 3: CI/CD DEPLOYMENT PIPELINE */}
-        {cicdProject && (
-          <section id="cloud-lab-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
+        {/* LAB 3: HYPERVISOR & ACTIVE DIRECTORY */}
+        {adProject && (
+          <section id="ad-homelab-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
             {/* Left Column: Woven Explanation */}
             <div className="lg:col-span-4 space-y-6">
               <div>
-                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 03 / Automation Pipeline</p>
-                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{cicdProject.title}</h2>
+                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 03 / Hypervisor Virt & AD</p>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{adProject.title}</h2>
               </div>
 
               <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-                <p>{cicdProject.overview}</p>
+                <p>{adProject.overview}</p>
                 
                 <div>
                   <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-1">Goal</h4>
-                  <p>{cicdProject.goal}</p>
+                  <p>{adProject.goal}</p>
                 </div>
 
                 <div>
                   <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Technologies Used</h4>
                   <div className="flex flex-wrap gap-1">
-                    {cicdProject.technologies.map((t) => (
+                    {adProject.technologies.map((t) => (
                       <span key={t} className="text-[9px] font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-foreground">
                         {t}
                       </span>
@@ -231,7 +230,7 @@ export default function Home() {
                 <div className="pt-2">
                   <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Achievements</h4>
                   <ul className="space-y-1.5">
-                    {cicdProject.whatIDid.map((item, i) => (
+                    {adProject.whatIDid.map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-xs">
                         <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/70 flex-shrink-0" />
                         <span>{item}</span>
@@ -242,9 +241,10 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Column: Live CD Visualizer */}
-            <div className="lg:col-span-8">
-              <PipelineVisualizer />
+            {/* Right Column: Live Interactables */}
+            <div className="lg:col-span-8 space-y-6">
+              <ProxmoxLabViewer />
+              <ActiveDirectoryExplorer />
             </div>
           </section>
         )}

@@ -4,6 +4,7 @@ import ProxmoxLabViewer from "@/components/ProxmoxLabViewer";
 import NasExplorer from "@/components/NasExplorer";
 import ActiveDirectoryExplorer from "@/components/ActiveDirectoryExplorer";
 import PipelineVisualizer from "@/components/PipelineVisualizer";
+import PowerShellConsole from "@/components/PowerShellConsole";
 
 export default function Projects() {
   return (
@@ -139,6 +140,12 @@ export default function Projects() {
             {p.id === "nas-storage" && (
               <div className="relative z-10 mt-8 pt-8 border-t border-border/40">
                 <NasExplorer />
+              </div>
+            )}
+
+            {p.id === "automation-scripts" && (
+              <div className="relative z-10 mt-8 pt-8 border-t border-border/40">
+                <PowerShellConsole />
               </div>
             )}
           </article>

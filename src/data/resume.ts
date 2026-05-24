@@ -17,29 +17,6 @@ export const highlights = [
 
 export const projects = [
   {
-    id: "ad-homelab",
-    title: "Active Directory Home Lab",
-    status: "Completed",
-    overview:
-      "Built a bare-metal Type-1 hypervisor using Proxmox VE hosting a virtual Windows Server domain controller and Active Directory environment, equipped with a live frontend query tool to inspect system accounts and active services in real time.",
-    goal:
-      "Practice hands-on enterprise virtualization, Active Directory administration, and operating system audits through secure, live integrations.",
-    technologies: ["Proxmox VE", "Windows Server 2022", "Active Directory", "PowerShell Cmdlets", "System Auditing"],
-    whatIDid: [
-      "Provisioned a bare-metal Proxmox Virtual Environment (PVE)",
-      "Set up a virtualized Windows Server domain controller and configured Active Directory Domain Services (AD DS)",
-      "Built an OS-level query endpoint using PowerShell child-processes to fetch active domain users, running processes, and network setups",
-      "Designed a real-time frontend Directory Explorer allowing visitors to execute active audits on the hosting server",
-      "Configured Group Policy Objects (GPOs) and organizational units (OUs) for system hardening"
-    ],
-    result: "Completed — AD DS environment fully deployed and integrated with live query tools on this portfolio.",
-    takeaways: [
-      "Deep familiarity with Windows Server roles, AD DS administration, and domain architecture",
-      "Executing safe, read-only administrative PowerShell scripts via API endpoints",
-      "Diagnosing network virtualization, DHCP, DNS, and secure directory services"
-    ],
-  },
-  {
     id: "cloud-lab",
     title: "Azure Cloud Deployment & CI/CD",
     status: "Completed",
@@ -87,22 +64,47 @@ export const projects = [
   {
     id: "automation-scripts",
     title: "PowerShell Automation Scripts",
-    status: "Planned",
+    status: "Completed",
     overview:
-      "A planned collection of PowerShell scripts to automate common system administration tasks like bulk user creation, backup automation, and system monitoring.",
+      "Built an interactive PowerShell Scripts repository on this portfolio, loaded with system diagnostics, network audits, and storage capacity integrity verification scripts.",
     goal:
-      "Reduce repetitive manual IT tasks and develop scripting skills applicable in a real enterprise environment.",
-    technologies: ["PowerShell", "Windows Server", "Active Directory PowerShell Module", "Task Scheduler"],
+      "Learn scripting automation with PowerShell cmdlets, handling system resource querying, monitoring filesystem quotas, and auditing security configurations.",
+    technologies: ["PowerShell Core", "Azure Functions", "System Diagnostics", "Directory Audits", "Terminal Simulation"],
     whatIDid: [
-      "Bulk user creation script design",
-      "Backup automation planning",
-      "System monitoring script architecture",
+      "Developed administrative diagnostics scripts querying CPU, kernel, memory, and network interfaces",
+      "Created storage quota scripts measuring folder capacities and predicting quota limits",
+      "Designed Domain Services validation routines identifying running services and linked GPOs",
+      "Built a secure backend API allowing execution of predefined scripts while preventing arbitrary injection",
+      "Designed a simulated, responsive Windows PowerShell terminal frontend with execution progress tracking"
     ],
-    result: "Planned — script design and requirements gathering in progress.",
+    result: "Completed — Integrated PowerShell Console live with system diagnostic capability.",
     takeaways: [
-      "PowerShell syntax and scripting best practices",
-      "Automating Active Directory user management",
-      "Scheduling and logging automated tasks",
+      "Parsing and outputting structured stream objects (Success, Warning, Error, Verbose)",
+      "Enforcing strict parameter whitelisting to guarantee endpoint security",
+      "Building responsive interactive CLI widgets simulating terminal environments"
+    ],
+  },
+  {
+    id: "ad-homelab",
+    title: "Active Directory Home Lab",
+    status: "Completed",
+    overview:
+      "Built a bare-metal Type-1 hypervisor using Proxmox VE hosting a virtual Windows Server domain controller and Active Directory environment, equipped with a live frontend query tool to inspect system accounts and active services in real time.",
+    goal:
+      "Practice hands-on enterprise virtualization, Active Directory administration, and operating system audits through secure, live integrations.",
+    technologies: ["Proxmox VE", "Windows Server 2022", "Active Directory", "PowerShell Cmdlets", "System Auditing"],
+    whatIDid: [
+      "Provisioned a bare-metal Proxmox Virtual Environment (PVE)",
+      "Set up a virtualized Windows Server domain controller and configured Active Directory Domain Services (AD DS)",
+      "Built an OS-level query endpoint using PowerShell child-processes to fetch active domain users, running processes, and network setups",
+      "Designed a real-time frontend Directory Explorer allowing visitors to execute active audits on the hosting server",
+      "Configured Group Policy Objects (GPOs) and organizational units (OUs) for system hardening"
+    ],
+    result: "Completed — AD DS environment fully deployed and integrated with live query tools on this portfolio.",
+    takeaways: [
+      "Deep familiarity with Windows Server roles, AD DS administration, and domain architecture",
+      "Executing safe, read-only administrative PowerShell scripts via API endpoints",
+      "Diagnosing network virtualization, DHCP, DNS, and secure directory services"
     ],
   },
 ];

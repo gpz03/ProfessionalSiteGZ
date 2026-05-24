@@ -11,6 +11,7 @@ import ProxmoxLabViewer from "@/components/ProxmoxLabViewer";
 import ActiveDirectoryExplorer from "@/components/ActiveDirectoryExplorer";
 import NasExplorer from "@/components/NasExplorer";
 import PipelineVisualizer from "@/components/PipelineVisualizer";
+import PowerShellConsole from "@/components/PowerShellConsole";
 
 export default function Home() {
   const [location, setLocation] = useLocation();
@@ -45,6 +46,7 @@ export default function Home() {
   const adProject = getProjectData("ad-homelab");
   const nasProject = getProjectData("nas-storage");
   const cicdProject = getProjectData("cloud-lab");
+  const autoProject = getProjectData("automation-scripts");
 
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 flex flex-col gap-16 min-h-[calc(100vh-4rem)]">
@@ -198,13 +200,63 @@ export default function Home() {
           </section>
         )}
 
-        {/* LAB 3: HYPERVISOR & ACTIVE DIRECTORY */}
+        {/* LAB 3: POWERSHELL AUTOMATION SCRIPTS */}
+        {autoProject && (
+          <section id="automation-scripts-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
+            {/* Left Column: Woven Explanation */}
+            <div className="lg:col-span-4 space-y-6">
+              <div>
+                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 03 / Systems Scripting</p>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{autoProject.title}</h2>
+              </div>
+
+              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <p>{autoProject.overview}</p>
+                
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-1">Goal</h4>
+                  <p>{autoProject.goal}</p>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Technologies Used</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {autoProject.technologies.map((t) => (
+                      <span key={t} className="text-[9px] font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-foreground">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Achievements</h4>
+                  <ul className="space-y-1.5">
+                    {autoProject.whatIDid.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs">
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/70 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Live PowerShell Console */}
+            <div className="lg:col-span-8">
+              <PowerShellConsole />
+            </div>
+          </section>
+        )}
+
+        {/* LAB 4: HYPERVISOR & ACTIVE DIRECTORY */}
         {adProject && (
           <section id="ad-homelab-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
             {/* Left Column: Woven Explanation */}
             <div className="lg:col-span-4 space-y-6">
               <div>
-                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 03 / Hypervisor Virt & AD</p>
+                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 04 / Hypervisor Virt & AD</p>
                 <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{adProject.title}</h2>
               </div>
 

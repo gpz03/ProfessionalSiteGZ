@@ -5,6 +5,7 @@ import NasExplorer from "@/components/NasExplorer";
 import ActiveDirectoryExplorer from "@/components/ActiveDirectoryExplorer";
 import PipelineVisualizer from "@/components/PipelineVisualizer";
 import PowerShellConsole from "@/components/PowerShellConsole";
+import NetworkTopologySimulator from "@/components/NetworkTopologySimulator";
 
 export default function Projects() {
   return (
@@ -146,6 +147,12 @@ export default function Projects() {
             {p.id === "automation-scripts" && (
               <div className="relative z-10 mt-8 pt-8 border-t border-border/40">
                 <PowerShellConsole />
+              </div>
+            )}
+
+            {p.id === "network-topology" && (
+              <div className="relative z-10 mt-8 pt-8 border-t border-border/40">
+                <NetworkTopologySimulator />
               </div>
             )}
           </article>

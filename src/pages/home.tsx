@@ -12,6 +12,7 @@ import ActiveDirectoryExplorer from "@/components/ActiveDirectoryExplorer";
 import NasExplorer from "@/components/NasExplorer";
 import PipelineVisualizer from "@/components/PipelineVisualizer";
 import PowerShellConsole from "@/components/PowerShellConsole";
+import NetworkTopologySimulator from "@/components/NetworkTopologySimulator";
 
 export default function Home() {
   const [location, setLocation] = useLocation();
@@ -47,6 +48,7 @@ export default function Home() {
   const nasProject = getProjectData("nas-storage");
   const cicdProject = getProjectData("cloud-lab");
   const autoProject = getProjectData("automation-scripts");
+  const networkProject = getProjectData("network-topology");
 
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 flex flex-col gap-16 min-h-[calc(100vh-4rem)]">
@@ -297,6 +299,56 @@ export default function Home() {
             <div className="lg:col-span-8 space-y-6">
               <ProxmoxLabViewer />
               <ActiveDirectoryExplorer />
+            </div>
+          </section>
+        )}
+
+        {/* LAB 5: NETWORK TOPOLOGY & SECURITY SIMULATOR */}
+        {networkProject && (
+          <section id="network-topology-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 border-b border-border/30 pb-16 scroll-mt-20">
+            {/* Left Column: Woven Explanation */}
+            <div className="lg:col-span-4 space-y-6">
+              <div>
+                <p className="text-[10px] font-mono text-primary uppercase tracking-widest mb-2">LAB 05 / Networking & Security</p>
+                <h2 className="text-2xl font-extrabold text-foreground tracking-tight">{networkProject.title}</h2>
+              </div>
+
+              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <p>{networkProject.overview}</p>
+                
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-1">Goal</h4>
+                  <p>{networkProject.goal}</p>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Technologies Used</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {networkProject.technologies.map((t) => (
+                      <span key={t} className="text-[9px] font-mono bg-muted border border-border px-1.5 py-0.5 rounded text-foreground">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">Achievements</h4>
+                  <ul className="space-y-1.5">
+                    {networkProject.whatIDid.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs">
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/70 flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Live Network Simulator */}
+            <div className="lg:col-span-8">
+              <NetworkTopologySimulator />
             </div>
           </section>
         )}

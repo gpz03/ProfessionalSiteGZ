@@ -107,6 +107,29 @@ export const projects = [
       "Diagnosing network virtualization, DHCP, DNS, and secure directory services"
     ],
   },
+  {
+    id: "network-topology",
+    title: "Network Topology & Security Simulator",
+    status: "Completed",
+    overview:
+      "Designed an interactive SVG-based network topology visualizer and diagnostic simulator allowing visitors to trace packet routes, test network commands, and configure firewall sandbox rules in real time.",
+    goal:
+      "Demonstrate hands-on networking and security concepts including VLAN separation, ICMP ping filters, IP routing path calculations, and Intrusion Prevention Systems (IPS).",
+    technologies: ["React Hooks", "SVG Animation", "Network Protocols", "Firewall Rules", "Diagnostic Tools"],
+    whatIDid: [
+      "Constructed an interactive network canvas using responsive SVG path animations to trace packet hops",
+      "Created visual firewall node intercepts which drop/reject blocked packets dynamically",
+      "Built a diagnostic command panel simulating Ping, Traceroute, HTTP GET, and TCP Port Scan queries",
+      "Designed sandbox toggles enforcing ICMP blocks, VLAN 20 isolation, and active security filters",
+      "Implemented a live terminal log rendering realistic console command feedback based on firewall rules"
+    ],
+    result: "Completed — Visual network topology playground integrated with live firewall rule verification.",
+    takeaways: [
+      "Translating Layer 2/3 network separation concepts into modular UI components",
+      "Animating complex hardware-accelerated vector graphics paths in HTML DOM",
+      "Designing responsive troubleshooting utilities mimicking enterprise diagnostics"
+    ],
+  },
 ];
 
 export const experience = [

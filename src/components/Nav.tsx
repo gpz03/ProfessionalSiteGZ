@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Menu, X, Terminal } from "lucide-react";
+import { Menu, X, Server } from "lucide-react";
 import { person } from "@/data/resume";
 
 const navLinks = [
@@ -40,17 +40,16 @@ export default function Nav() {
           href="/" 
           data-testid="nav-logo" 
           onClick={() => handleNavClick("/")}
-          className="flex items-center gap-2.5 font-mono font-bold text-xs sm:text-sm tracking-tight text-foreground hover:opacity-95 transition-opacity"
+          className="flex items-center gap-2.5 hover:opacity-90 transition-opacity"
         >
-          <div className="p-1.5 rounded-md bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
-            <Terminal size={14} />
+          <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
+            <Server size={15} />
           </div>
-          <span className="flex items-center">
-            <span className="text-foreground">gavin.zola</span>
-            <span className="text-primary font-bold">@</span>
-            <span className="text-muted-foreground">portfolio</span>
-            <span className="text-primary font-bold ml-1">~</span>
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="font-extrabold text-sm tracking-tight text-foreground">{person.name}</span>
+            <span className="hidden sm:inline text-muted-foreground/30 font-light">|</span>
+            <span className="hidden sm:inline text-[9px] font-bold font-mono tracking-widest text-muted-foreground uppercase">Systems & Networks</span>
+          </div>
         </Link>
 
         {/* Desktop nav */}

@@ -1,6 +1,6 @@
 export const person = {
   name: "Gavin Zola",
-  title: "IT Graduate | System Administration | Cloud & Infrastructure Focus",
+  title: "IT Graduate | System Administration",
   summary:
     "IT system administration graduate (UMass Boston, May 2026) with a track record of translating complex technology into clear, confident communication for customers, colleagues, and clients. Consistently top performing according to tracked metrics at previous positions. Experienced in onboarding and training. Technically grounded in cloud, networking, system administration, and agentic gen AI. Notable people skills and a Management minor bridging technology and business.",
   email: "GZ.IT.26@gmail.com",

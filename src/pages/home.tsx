@@ -57,7 +57,7 @@ export default function Home() {
       <section className="relative border border-border/50 rounded-2xl bg-card/40 backdrop-blur-md p-6 sm:p-8 overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-6 duration-500">
         <div className="absolute -left-16 -top-16 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+        <div className="relative z-10 flex flex-col gap-6">
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-mono font-bold tracking-wider mb-4">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -67,15 +67,15 @@ export default function Home() {
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground mb-3">
               {person.name}
             </h1>
-            <p className="text-base sm:text-lg font-mono text-muted-foreground">
-              <span className="text-primary">&gt;</span> {person.title}
+            <p className="text-base sm:text-lg font-mono text-muted-foreground flex items-center gap-1.5">
+              <span className="text-primary font-bold">&gt;</span> {person.title}
             </p>
           </div>
 
           <div className="flex flex-wrap gap-3">
             <a
               href={`mailto:${person.email}`}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-muted/50 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2.5 border border-primary/20 bg-primary/5 rounded-lg text-xs font-semibold text-foreground hover:border-primary/50 hover:bg-primary/10 transition-all shadow-sm"
             >
               <Mail size={14} className="text-primary" /> {person.email}
             </a>
@@ -83,7 +83,7 @@ export default function Home() {
               href={person.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-muted/50 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2.5 border border-border bg-card/50 rounded-lg text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-muted/50 transition-all shadow-sm"
             >
               <FaLinkedin size={14} className="text-primary" /> LinkedIn
             </a>
@@ -91,7 +91,7 @@ export default function Home() {
               href={person.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-muted/50 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2.5 border border-border bg-card/50 rounded-lg text-xs font-semibold text-foreground hover:border-primary/40 hover:bg-muted/50 transition-all shadow-sm"
             >
               <FaGithub size={14} className="text-primary" /> GitHub
             </a>

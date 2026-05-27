@@ -29,6 +29,7 @@ function getTotalStorageUsed(dir) {
     if (fs.existsSync(dir)) {
         const files = fs.readdirSync(dir);
         for (const file of files) {
+            if (file.startsWith('.')) continue;
             const filePath = path.join(dir, file);
             try {
                 const stats = fs.statSync(filePath);
@@ -161,11 +162,15 @@ app.http('nas', {
             // Seed initial mock files for local demo if directory is empty
             if (fs.existsSync(targetDir)) {
                 try {
-                    const entries = fs.readdirSync(targetDir);
-                    const fileEntries = entries.filter(e => fs.statSync(path.join(targetDir, e)).isFile());
-                    if (fileEntries.length === 0) {
-                        fs.writeFileSync(path.join(targetDir, 'presentation.pdf'), Buffer.alloc(1048576)); // 1MB mock file
-                        fs.writeFileSync(path.join(targetDir, 'backup_config.xml'), Buffer.from('<config><version>1.0</version></config>'));
+                    const seededFlag = path.join(targetDir, '.seeded');
+                    if (!fs.existsSync(seededFlag)) {
+                        const entries = fs.readdirSync(targetDir);
+                        const fileEntries = entries.filter(e => fs.statSync(path.join(targetDir, e)).isFile() && !e.startsWith('.'));
+                        if (fileEntries.length === 0) {
+                            fs.writeFileSync(path.join(targetDir, 'presentation.pdf'), Buffer.alloc(1048576)); // 1MB mock file
+                            fs.writeFileSync(path.join(targetDir, 'backup_config.xml'), Buffer.from('<config><version>1.0</version></config>'));
+                        }
+                        fs.writeFileSync(seededFlag, 'true');
                     }
                 } catch (e) {
                     context.log("Failed to seed mock files:", e.message);
@@ -176,7 +181,7 @@ app.http('nas', {
                 if (fileName) {
                     const safeName = path.basename(fileName);
                     const filePath = path.join(targetDir, safeName);
-                    if (!fs.existsSync(filePath)) {
+                    if (!fs.existsSync(filePath) || safeName.startsWith('.')) {
                         return addCors({ status: 404, jsonBody: { error: "File not found" } });
                     }
                     const fileBuffer = fs.readFileSync(filePath);
@@ -194,6 +199,7 @@ app.http('nas', {
                     if (fs.existsSync(targetDir)) {
                         const entries = fs.readdirSync(targetDir);
                         for (const entry of entries) {
+                            if (entry.startsWith('.')) continue;
                             const filePath = path.join(targetDir, entry);
                             try {
                                 const stats = fs.statSync(filePath);
@@ -233,6 +239,11 @@ app.http('nas', {
                 const name = file.name || 'file';
                 const safeName = path.basename(name);
                 const size = file.size;
+
+                // Prevent uploading files starting with '.'
+                if (safeName.startsWith('.')) {
+                    return addCors({ status: 400, jsonBody: { error: "Filenames starting with dot are not allowed" } });
+                }
 
                 // Quota check for guests
                 if (!isAdmin) {
@@ -274,7 +285,7 @@ app.http('nas', {
                 }
                 const safeName = path.basename(fileName);
                 const targetPath = path.join(targetDir, safeName);
-                if (!fs.existsSync(targetPath)) {
+                if (!fs.existsSync(targetPath) || safeName.startsWith('.')) {
                     return addCors({ status: 404, jsonBody: { error: "File not found" } });
                 }
                 fs.unlinkSync(targetPath);

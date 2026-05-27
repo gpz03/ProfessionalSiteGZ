@@ -61,10 +61,13 @@ export default function NetworkTopologySimulator() {
     ""
   ]);
 
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+  const logsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = logsContainerRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
   }, [terminalLogs]);
 
   // Compute the hop path between nodes
@@ -529,7 +532,7 @@ export default function NetworkTopologySimulator() {
             </button>
           </div>
 
-          <div className="flex-1 p-4 font-mono text-[11px] overflow-y-auto leading-relaxed select-text space-y-1">
+          <div ref={logsContainerRef} className="flex-1 p-4 font-mono text-[11px] overflow-y-auto leading-relaxed select-text space-y-1">
             {terminalLogs.map((log, idx) => {
               let colorClass = "text-slate-300";
               if (log.startsWith("[+]")) colorClass = "text-emerald-400 font-semibold";
@@ -543,7 +546,6 @@ export default function NetworkTopologySimulator() {
                 </div>
               );
             })}
-            <div ref={terminalEndRef} />
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 node_modules
 dist
 dist-github
+dist-azure
 .DS_Store
 .env
 .env.local

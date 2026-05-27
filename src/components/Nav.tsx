@@ -6,9 +6,9 @@ import { person } from "@/data/resume";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
-  { href: "/experience", label: "Experience" },
-  { href: "/skills", label: "Skills" },
   { href: "/about", label: "About" },
+  { href: "/skills", label: "Skills" },
+  { href: "/experience", label: "Experience" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -16,12 +16,30 @@ export default function Nav() {
   const [location] = useLocation();
   const [open, setOpen] = useState(false);
 
+  const handleNavClick = (href: string) => {
+    if (href === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (href === "/projects") {
+      const el = document.getElementById("cloud-lab-section");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      const id = href.replace("/", "");
+      // Dispatch custom event to expand resume if needed
+      window.dispatchEvent(new CustomEvent("expand-resume"));
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-background/50 backdrop-blur-md shadow-sm">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 flex h-16 items-center justify-between">
         <Link 
           href="/" 
           data-testid="nav-logo" 
+          onClick={() => handleNavClick("/")}
           className="flex items-center gap-2.5 font-mono font-bold text-xs sm:text-sm tracking-tight text-foreground hover:opacity-95 transition-opacity"
         >
           <div className="p-1.5 rounded-md bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
@@ -43,6 +61,7 @@ export default function Nav() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => handleNavClick(link.href)}
                 data-testid={`nav-link-${link.label.toLowerCase()}`}
                 className={`text-[10px] font-bold font-mono tracking-wider uppercase px-3 py-1.5 rounded-full border transition-all duration-200 ${
                   isActive
@@ -78,7 +97,10 @@ export default function Nav() {
                   key={link.href}
                   href={link.href}
                   data-testid={`nav-mobile-link-${link.label.toLowerCase()}`}
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    handleNavClick(link.href);
+                    setOpen(false);
+                  }}
                   className={`px-3 py-2.5 rounded-lg text-xs font-bold font-mono tracking-wider uppercase border transition-all ${
                     isActive
                       ? "bg-primary/10 border-primary/25 text-primary"

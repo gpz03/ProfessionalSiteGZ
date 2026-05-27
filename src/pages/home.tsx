@@ -18,6 +18,13 @@ export default function Home() {
   const [location, setLocation] = useLocation();
   const [isResumeExpanded, setIsResumeExpanded] = useState<boolean>(false);
 
+  // Listen for navigation requests to expand the resume details accordion
+  useEffect(() => {
+    const handleExpand = () => setIsResumeExpanded(true);
+    window.addEventListener("expand-resume", handleExpand);
+    return () => window.removeEventListener("expand-resume", handleExpand);
+  }, []);
+
   // Sync wouter URLs with dashboard state
   useEffect(() => {
     if (["/experience", "/skills", "/about", "/contact"].includes(location)) {
@@ -36,6 +43,9 @@ export default function Home() {
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
+    } else if (location === "/") {
+      // Ensure we scroll to the top when navigating home
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [location]);
 

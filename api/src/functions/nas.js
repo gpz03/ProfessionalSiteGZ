@@ -105,8 +105,13 @@ app.http('nas', {
                 };
 
                 if (request.method === 'POST') {
-                    fetchOptions.body = request.body;
-                    fetchOptions.duplex = 'half';
+                    const formData = await request.formData();
+                    const newFormData = new FormData();
+                    for (const [key, val] of formData.entries()) {
+                        newFormData.append(key, val);
+                    }
+                    fetchOptions.body = newFormData;
+                    headers.delete('content-type');
                 }
 
                 const backendRes = await fetch(targetUrl.toString(), fetchOptions);
@@ -152,6 +157,20 @@ app.http('nas', {
         // --- LOCAL DIRECTORY MODE ---
         try {
             const fileName = url.searchParams.get('file');
+
+            // Seed initial mock files for local demo if directory is empty
+            if (fs.existsSync(targetDir)) {
+                try {
+                    const entries = fs.readdirSync(targetDir);
+                    const fileEntries = entries.filter(e => fs.statSync(path.join(targetDir, e)).isFile());
+                    if (fileEntries.length === 0) {
+                        fs.writeFileSync(path.join(targetDir, 'presentation.pdf'), Buffer.alloc(1048576)); // 1MB mock file
+                        fs.writeFileSync(path.join(targetDir, 'backup_config.xml'), Buffer.from('<config><version>1.0</version></config>'));
+                    }
+                } catch (e) {
+                    context.log("Failed to seed mock files:", e.message);
+                }
+            }
 
             if (request.method === 'GET') {
                 if (fileName) {

@@ -9,125 +9,6 @@ interface NasFile {
   uploadedAt: string;
 }
 
-// --- INDEXEDDB STORAGE HELPERS FOR GUEST MODE SANDBOX ---
-const DB_NAME = "nas_storage_db";
-const STORE_NAME = "guest_files";
-
-function openDB(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: "name" });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-async function getDbFiles(): Promise<NasFile[]> {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, "readonly");
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.getAll();
-    request.onsuccess = () => {
-      const results = request.result.map((f: any) => ({
-        name: f.name,
-        size: f.size,
-        uploadedAt: f.uploadedAt
-      }));
-      resolve(results);
-    };
-    request.onerror = () => reject(request.error);
-  });
-}
-
-async function saveDbFile(name: string, file: File): Promise<void> {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
-    const fileEntry = {
-      name,
-      size: file.size,
-      uploadedAt: new Date().toISOString(),
-      data: file
-    };
-    const request = store.put(fileEntry);
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
-}
-
-async function getDbFileData(name: string): Promise<Blob> {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, "readonly");
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.get(name);
-    request.onsuccess = () => {
-      if (request.result) {
-        resolve(request.result.data);
-      } else {
-        reject(new Error("File not found in local sandbox."));
-      }
-    };
-    request.onerror = () => reject(request.error);
-  });
-}
-
-async function deleteDbFile(name: string): Promise<void> {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.delete(name);
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
-}
-
-async function seedMockFilesIfNeeded(): Promise<void> {
-  const seeded = localStorage.getItem("nas_guest_seeded");
-  if (seeded) return;
-
-  const db = await openDB();
-  const transaction = db.transaction(STORE_NAME, "readwrite");
-  const store = transaction.objectStore(STORE_NAME);
-
-  return new Promise<void>((resolve) => {
-    const countRequest = store.count();
-    countRequest.onsuccess = () => {
-      if (countRequest.result === 0) {
-        const presentationBlob = new Blob([new ArrayBuffer(1024 * 1024)], { type: "application/pdf" });
-        const configBlob = new Blob([new TextEncoder().encode("<config><version>1.0</version></config>")], { type: "text/xml" });
-        
-        store.put({
-          name: "presentation.pdf",
-          size: presentationBlob.size,
-          uploadedAt: new Date().toISOString(),
-          data: presentationBlob
-        });
-
-        store.put({
-          name: "backup_config.xml",
-          size: configBlob.size,
-          uploadedAt: new Date().toISOString(),
-          data: configBlob
-        });
-      }
-      localStorage.setItem("nas_guest_seeded", "true");
-      resolve();
-    };
-    countRequest.onerror = () => {
-      resolve(); // fail-soft
-    };
-  });
-}
-
 export default function NasExplorer() {
   const { toast } = useToast();
   const [files, setFiles] = useState<NasFile[]>([]);
@@ -156,26 +37,6 @@ export default function NasExplorer() {
     setError(null);
     const key = keyOverride !== undefined ? keyOverride : (localStorage.getItem("nas_admin_key") || "");
     
-    if (!key) {
-      // Guest Mode: fetch from persistent browser IndexedDB
-      try {
-        await seedMockFilesIfNeeded();
-        const dbFiles = await getDbFiles();
-        // Sort by newest
-        dbFiles.sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
-        setFiles(dbFiles);
-        setTotalSize(dbFiles.reduce((acc, f) => acc + f.size, 0));
-        setLimit(1024 * 1024 * 1024);
-        setMode("guest");
-      } catch (err: any) {
-        setError(err.message || "Failed to load local NAS database.");
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
-    // Owner Mode: fetch from Azure backend API
     try {
       const headers: Record<string, string> = {};
       if (key) {
@@ -197,13 +58,25 @@ export default function NasExplorer() {
       setFiles(data.files || []);
       setTotalSize(data.totalSize || 0);
       setLimit(data.limit || 0);
-      setMode(data.mode || "guest");
-      if (key && data.mode === "owner") {
-        setIsUnlocked(true);
+      
+      if (key && data.mode === "guest") {
+        // Key was submitted but backend returned guest mode, meaning the key is invalid
+        localStorage.removeItem("nas_admin_key");
+        setIsUnlocked(false);
+        setMode("guest");
+        toast({
+          variant: "destructive",
+          title: "Authentication Failed",
+          description: "Invalid owner access key. Reverted to Guest Mode.",
+        });
+      } else {
+        setMode(data.mode || "guest");
+        if (key && data.mode === "owner") {
+          setIsUnlocked(true);
+        }
       }
     } catch (err: any) {
       setError(err.message || "Failed to load NAS files.");
-      // If error contains credentials issue, fallback to guest fetch
       if (key) {
         localStorage.removeItem("nas_admin_key");
         setIsUnlocked(false);
@@ -299,18 +172,6 @@ export default function NasExplorer() {
 
     setUploading(true);
     try {
-      if (!key) {
-        // Guest Mode: Store persistently in local browser database
-        await saveDbFile(file.name, file);
-        toast({
-          title: "Success (Local Sandbox)",
-          description: `Successfully stored "${file.name}" in your browser's persistent NAS partition.`,
-        });
-        fetchFiles();
-        return;
-      }
-
-      // Owner Mode: upload to Azure Functions/Home Server
       const formData = new FormData();
       formData.append("file", file);
 
@@ -351,21 +212,6 @@ export default function NasExplorer() {
   const handleDownload = async (fileName: string) => {
     const key = localStorage.getItem("nas_admin_key");
     try {
-      if (!key) {
-        // Guest Mode: retrieve from local browser database
-        const blob = await getDbFileData(fileName);
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-        return;
-      }
-
-      // Owner Mode: fetch from API
       const headers: Record<string, string> = {};
       if (key) {
         headers["Authorization"] = `Bearer ${key}`;
@@ -402,18 +248,6 @@ export default function NasExplorer() {
 
     const key = localStorage.getItem("nas_admin_key");
     try {
-      if (!key) {
-        // Guest Mode: delete from local browser database
-        await deleteDbFile(fileName);
-        toast({
-          title: "Deleted",
-          description: `Deleted "${fileName}" from local sandbox.`,
-        });
-        fetchFiles();
-        return;
-      }
-
-      // Owner Mode: delete from API
       const headers: Record<string, string> = {};
       if (key) {
         headers["Authorization"] = `Bearer ${key}`;

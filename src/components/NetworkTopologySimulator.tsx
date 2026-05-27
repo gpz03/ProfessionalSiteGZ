@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Network, Play, Shield, ShieldAlert, ShieldCheck, Terminal, ToggleLeft, ToggleRight, Info } from "lucide-react";
+import { getApiUrl } from "@/lib/api";
 
 interface Node {
   id: string;
@@ -102,139 +103,78 @@ export default function NetworkTopologySimulator() {
     return pathNodes;
   };
 
-  const runDiagnostic = () => {
+  const runDiagnostic = async () => {
     if (isAnimating) return;
     setIsAnimating(true);
     setAlertMessage(null);
 
-    const hops = getRoutePath(source, destination);
-    
-    // Evaluate rules and decide where the path stops/fails
-    let isBlocked = false;
-    let blockReason = "";
-    let blockIndex = hops.length; // Defaults to completing the path
-
-    // 1. VLAN Isolation Rule (Blocks Workstation 2 from internal servers)
-    if (vlanIsolate) {
-      if (
-        (source === "ws2" && (destination === "dc" || destination === "nas")) ||
-        (destination === "ws2" && (source === "dc" || source === "nas"))
-      ) {
-        isBlocked = true;
-        blockIndex = 1; // Blocked at Core Switch
-        blockReason = "VLAN Isolation Active: VLAN 20 is isolated from VLAN 10 management servers.";
-      }
-    }
-
-    // 2. ICMP Block Rule (Blocks pings to/from Internet or external zones)
-    if (icmpBlock && diagnosticTool === "ping") {
-      if (source === "internet" || destination === "internet") {
-        isBlocked = true;
-        blockIndex = hops.findIndex(n => n.id === "firewall");
-        blockReason = "Firewall Rule Drop: ICMP Echo Requests (Ping) are dropped by Core Firewall policy.";
-      }
-    }
-
-    // 3. Port Filtering Web Block (Blocks HTTP Port 80/443)
-    if (webBlock && diagnosticTool === "http") {
-      if (source === "internet" || destination === "internet") {
-        isBlocked = true;
-        blockIndex = hops.findIndex(n => n.id === "firewall");
-        blockReason = "Firewall Access Control: HTTP/HTTPS traffic (Port 80/443) is blocked by active Web ACL.";
-      }
-    }
-
-    // 4. IPS Rule (Blocks external Port Scan attacks)
-    if (diagnosticTool === "portscan" && source === "internet") {
-      if (ipsActive) {
-        isBlocked = true;
-        blockIndex = hops.findIndex(n => n.id === "firewall");
-        blockReason = "Intrusion Prevention Alert: TCP SYN Port Scan detected from public IP. Connection rejected.";
-      } else {
-        blockReason = "Security Concern: Public port scan completed. Unprotected ports were queried on core assets.";
-      }
-    }
-
-    // Build the SVG path string
-    const activeHops = hops.slice(0, blockIndex + 1);
-    const pathD = activeHops.map((node, idx) => `${idx === 0 ? "M" : "L"} ${node.x},${node.y}`).join(" ");
-    
-    setAnimationPath(pathD);
-    setPacketColor(isBlocked ? "#ff4d4d" : "#00ffcc");
-    setAnimationKey(prev => prev + 1);
-
-    // Terminal Logging Logic
+    const timestamp = new Date().toLocaleTimeString();
     const srcNode = NODES.find(n => n.id === source)!;
     const destNode = NODES.find(n => n.id === destination)!;
-    const timestamp = new Date().toLocaleTimeString();
 
     setTerminalLogs(prev => [
       ...prev,
-      `[${timestamp}] Executing ${diagnosticTool.toUpperCase()} from ${srcNode.name} (${srcNode.ip}) to ${destNode.name} (${destNode.ip})...`
+      `[${timestamp}] Establishing secure diagnostic gateway...`,
+      `[${timestamp}] Dispatching tracer probes to remote network...`
     ]);
 
-    // Handle Packet End Animation Timeout
-    const animationDuration = activeHops.length * 500; // 500ms per hop
-    setTimeout(() => {
-      setIsAnimating(false);
+    try {
+      const res = await fetch(getApiUrl("/api/network"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source,
+          destination,
+          tool: diagnosticTool,
+          icmpBlock,
+          vlanIsolate,
+          webBlock,
+          ipsActive
+        })
+      });
 
-      if (isBlocked) {
-        setAlertMessage({ type: "danger", text: blockReason });
-        setTerminalLogs(prev => [
-          ...prev,
-          `[*] Packet dropped at ${hops[blockIndex].name} (${hops[blockIndex].ip}).`,
-          `[-] Connection Error: Request timed out.`,
-          `[-] Diagnostic Failure: 100% packet loss.`,
-          ""
-        ]);
-      } else {
-        if (blockReason) {
-          // Warning state (e.g. unprotected portscan)
-          setAlertMessage({ type: "warning", text: blockReason });
-        } else {
-          setAlertMessage({ type: "success", text: `Success: Connection verified between hosts.` });
-        }
-        
-        // Print tool specific success logs
-        if (diagnosticTool === "ping") {
-          setTerminalLogs(prev => [
-            ...prev,
-            `[+] Reply from ${destNode.ip}: bytes=32 time=2ms TTL=64`,
-            `[+] Reply from ${destNode.ip}: bytes=32 time=1ms TTL=64`,
-            `[+] Ping complete: Packets Sent = 2, Received = 2, Lost = 0 (0% loss).`,
-            ""
-          ]);
-        } else if (diagnosticTool === "traceroute") {
-          const hopLines = activeHops.map((node, i) => ` ${i + 1}    <1ms    <1ms    <1ms    ${node.name} [${node.ip}]`);
-          setTerminalLogs(prev => [
-            ...prev,
-            `[+] Tracing route to ${destNode.name} [${destNode.ip}] over a maximum of 30 hops:`,
-            ...hopLines,
-            `[+] Trace complete.`,
-            ""
-          ]);
-        } else if (diagnosticTool === "http") {
-          setTerminalLogs(prev => [
-            ...prev,
-            `[+] Sending HTTP GET request to http://${destNode.ip}/index.html`,
-            `[+] Received HTTP/1.1 200 OK (Content-Length: 1405 bytes)`,
-            `[+] Connection verified on Port 80.`,
-            ""
-          ]);
-        } else if (diagnosticTool === "portscan") {
-          setTerminalLogs(prev => [
-            ...prev,
-            `[+] Initiating TCP SYN scan on target ${destNode.ip}:`,
-            `[+] Port 53 (DNS)     : OPEN`,
-            `[+] Port 80 (HTTP)    : OPEN`,
-            `[+] Port 135 (RPC)    : OPEN`,
-            `[+] Port 445 (SMB)    : OPEN`,
-            `[+] Scan finished: Target host is responsive.`,
-            ""
-          ]);
-        }
+      if (!res.ok) {
+        throw new Error(`Server returned status ${res.status}`);
       }
-    }, animationDuration);
+
+      const data = await res.json();
+      
+      const hops = getRoutePath(source, destination);
+      const activeHops = hops.slice(0, data.blockIndex + 1);
+      const pathD = activeHops.map((node, idx) => `${idx === 0 ? "M" : "L"} ${node.x},${node.y}`).join(" ");
+
+      setAnimationPath(pathD);
+      setPacketColor(data.isBlocked ? "#ff4d4d" : "#00ffcc");
+      setAnimationKey(prev => prev + 1);
+
+      // Packet animation takes 500ms per hop
+      const animationDuration = activeHops.length * 500;
+      setTimeout(() => {
+        setIsAnimating(false);
+
+        if (data.isBlocked) {
+          setAlertMessage({ type: "danger", text: data.blockReason });
+        } else {
+          if (diagnosticTool === "portscan" && !ipsActive) {
+            setAlertMessage({ type: "warning", text: "Security Exposure Warning: Public port scan completed. Unhardened ports were queried on datacenter assets." });
+          } else {
+            setAlertMessage({ type: "success", text: "Success: Connection verified between hosts." });
+          }
+        }
+
+        // Append the actual logs returned from the backend execution
+        setTerminalLogs(prev => [...prev, ...data.logs]);
+      }, animationDuration);
+
+    } catch (err: any) {
+      console.error(err);
+      setIsAnimating(false);
+      setTerminalLogs(prev => [
+        ...prev,
+        `[-] Diagnostic Failure: Failed to contact execution host: ${err.message}`,
+        ""
+      ]);
+    }
   };
 
   const getIconForType = (type: Node["type"]) => {

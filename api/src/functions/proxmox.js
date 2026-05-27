@@ -10,10 +10,12 @@ app.http('proxmox', {
     methods: ['GET', 'OPTIONS'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
+        const origin = request.headers.get('Origin') || request.headers.get('origin') || '*';
         const corsHeaders = {
-            'Access-Control-Allow-Origin': 'https://gpz03.github.io',
+            'Access-Control-Allow-Origin': origin,
             'Access-Control-Allow-Methods': 'GET, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, ngrok-skip-browser-warning'
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, ngrok-skip-browser-warning',
+            'Access-Control-Allow-Credentials': 'true'
         };
 
         if (request.method === 'OPTIONS') {

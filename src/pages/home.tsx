@@ -386,10 +386,10 @@ export default function Home() {
 
               <div className="md:col-span-8 space-y-4 text-sm sm:text-base text-foreground/80 leading-relaxed">
                 <p>
-                  I'm <strong>{person.name}</strong>, an Information Technology undergraduate at UMass Boston (graduating Spring 2026), specializing in System and Network Administration with a minor in Management.
+                  I'm <strong>{person.name}</strong>, an Information Technology graduate from the University of Massachusetts Boston (May 2026) with a minor in Management.
                 </p>
                 <p>
-                  My technical focus is on enterprise IT infrastructure — Windows Server, Active Directory, virtualization, and networking fundamentals. I enjoy building lab environments and scripting automated audits to make systems reliable and environments manageable.
+                  I am technically grounded in cloud, networking, system administration, and agentic GenAI, with a track record of translating complex technology into clear, confident communication for customers, colleagues, and clients.
                 </p>
                 
                 {/* Education list */}

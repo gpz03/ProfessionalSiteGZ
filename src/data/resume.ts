@@ -2,10 +2,10 @@ export const person = {
   name: "Gavin Zola",
   title: "IT Graduate | System Administration | Cloud & Infrastructure Focus",
   summary:
-    "Analytical and driven Information Technology undergraduate specializing in System and Network Administration, with hands-on experience in device management, network configuration, and user support. Demonstrated leadership as a top-performing associate and acting shift lead at Best Buy, translating complex technical concepts into clear customer guidance. Skilled in Windows Server, Linux, and enterprise device environments. Seeking an entry-level IT role focused on system administration, network operations, or infrastructure support.",
-  email: "gavinzola@email.com",
+    "IT system administration graduate (UMass Boston, May 2026) with a track record of translating complex technology into clear, confident communication for customers, colleagues, and clients. Consistently top performing according to tracked metrics at previous positions. Experienced in onboarding and training. Technically grounded in cloud, networking, system administration, and agentic gen AI. Notable people skills and a Management minor bridging technology and business.",
+  email: "GZ.IT.26@gmail.com",
   github: "https://github.com/gavinzola",
-  linkedin: "https://linkedin.com/in/gavinzola",
+  linkedin: "https://linkedin.com/in/gavin-zola-436670329",
 };
 
 export const highlights = [
@@ -18,7 +18,7 @@ export const highlights = [
 export const projects = [
   {
     id: "cloud-lab",
-    title: "Azure Cloud Deployment & CI/CD",
+    title: "Azure CI/CD Pipeline",
     status: "Completed",
     overview:
       "Engineered an automated CI/CD pipeline deploying this React portfolio to Azure using GitHub Actions and Azure Static Web Apps, integrated with a live continuous deployment Guestbook that commits signatures to GitHub via the REST API.",
@@ -40,13 +40,13 @@ export const projects = [
   },
   {
     id: "nas-storage",
-    title: "Personal NAS Cloud Storage",
+    title: "NAS Cloud Storage System",
     status: "Completed",
     overview:
       "Configured a Network Attached Storage (NAS) file storage server integrated with the portfolio site, letting users upload, browse, download, and manage files under a 1GB quota, while providing secure, unlimited persistent storage for the administrator.",
     goal:
       "Demonstrate hands-on storage area network (SAN) and NAS concepts, API-based file management, role-based authorization, and storage quota enforcement.",
-    technologies: ["Node.js", "Azure Functions", "File APIs", "Storage Quota System", "Vanilla CSS"],
+    technologies: ["Synology", "Node.js", "Azure Functions", "File APIs", "Storage Quota System", "Vanilla CSS"],
     whatIDid: [
       "Implemented a file upload/download API endpoint in Azure Functions",
       "Designed a storage quota calculation module enforcing 1GB total limits for guests",
@@ -63,7 +63,7 @@ export const projects = [
   },
   {
     id: "automation-scripts",
-    title: "PowerShell Automation Scripts",
+    title: "PowerShell Automation Suite",
     status: "Completed",
     overview:
       "Built an interactive PowerShell Scripts repository on this portfolio, loaded with system diagnostics, network audits, and storage capacity integrity verification scripts.",
@@ -135,72 +135,52 @@ export const projects = [
 export const experience = [
   {
     id: "bestbuy",
-    title: "Tech Sales Associate / Acting Shift Lead",
+    title: "Tech Sales Associate",
     company: "Best Buy",
     location: "Boston, MA",
-    dates: "April 2025 – Present",
+    dates: "Apr 2025 – Present",
     bullets: [
-      "Advise customers on computers, mobile devices, and tech peripherals, translating complex specifications into clear purchasing decisions",
-      "Serve as acting shift lead, coordinating team operations and ensuring high customer satisfaction in a high-volume retail environment",
-      "Apply hands-on technical knowledge to assist customers with product setup, troubleshooting, and technology guidance",
+      "Among the store's highest performers in core metrics; ranked in the top 20 sales teams nationally.",
+      "Onboarded and mentor new associates, lead informal training sessions and certifications.",
     ],
   },
   {
     id: "staples",
-    title: "Sales Consultant — Tech Services",
+    title: "Customer Tech Support & Sales Associate",
     company: "Staples",
-    location: "Boston, MA",
-    dates: "June 2022 – February 2024",
+    location: "Weymouth, MA",
+    dates: "Jun 2022 – Feb 2024",
     bullets: [
-      "Delivered tech services including computer scans, data backups, data transfers, antivirus installations, driver installs, OS updates, and virus removals",
-      "Guided customers through technology purchasing decisions for printers, computers, and peripherals, achieving consistent sales targets",
-      "Assisted across multiple store roles including cashier, furniture sales, online order processing, and customer account creation while maintaining high customer satisfaction",
+      "Delivered hands-on PC and mobile support (virus removal, OS installs, data transfers)",
+      "Built a reputation for patience with non-technical customers; consistently guided people of all ages through understanding and using their devices.",
     ],
   },
   {
     id: "sscps",
-    title: "IT Department Intern",
+    title: "IT Intern",
     company: "South Shore Charter Public School",
-    location: "Boston, MA",
-    dates: "June 2023 – August 2023",
+    location: "Norwell, MA",
+    dates: "Jun – Aug 2023",
     bullets: [
-      "Conducted device onboarding for Chromebooks, Macs, and iPads — including OS installations and enterprise software configuration",
-      "Repaired laptops, maintained projectors, and assisted with the setup of the school's new networking server and speaker system",
-      "Supported faculty and students with technical issues, gaining practical experience in IT management and internal business operations",
+      "Configured new server and AV infrastructure; onboarded, enrolled, and managed Chromebooks, Macs, and iPads via enterprise MDM.",
     ],
   },
 ];
 
 export const skills = {
-  Systems: ["Windows Server", "Linux / Unix", "Windows 10/11"],
-  Networking: ["DNS", "DHCP", "Network configuration", "Wi-Fi troubleshooting"],
-  Tools: ["Active Directory", "Hyper-V / VirtualBox", "Support ticketing systems"],
-  Cloud: ["Microsoft Azure (learning)", "Cloud VM fundamentals"],
-  Scripting: ["PowerShell", "Bash basics"],
-  "IT Support": [
-    "Device onboarding (Chromebook, Mac, iPad, PC)",
-    "Hardware & software troubleshooting",
-    "Over-the-phone technical support",
-    "Data backup & transfer",
-    "OS installations",
-  ],
-  "Other Skills": [
-    "Sales and customer communication",
-    "Technical writing for non-technical audiences",
-    "Generative AI tools (coding, agent models)",
-    "File management and organizational systems",
-  ],
+  "Cloud & DevOps": ["Microsoft Azure", "GitHub Actions", "CI/CD pipelines", "Azure Web Apps", "REST APIs"],
+  "Systems & Network": ["Active Directory", "Proxmox", "Windows Server", "TCP/IP", "DNS", "DHCP", "VLANs", "STP"],
+  "Scripting & Tools": ["PowerShell", "Python", "Bash", "SQL", "MDM platforms", "Git", "Antigravity", "Codex"],
+  Platforms: ["Windows", "macOS", "Linux/Unix", "ChromeOS", "Android"],
 };
 
 export const education = [
   {
-    institution: "UMass Boston",
-    degree: "B.S. Information Technology — System Administration Focus",
+    institution: "University of Massachusetts Boston",
+    degree: "B.S. Information Technology",
     minor: "Minor: Management",
-    dates: "September 2021 – Planned Spring 2026",
-    notes: [
-      "Attended lectures from industry leaders focusing on AI and its application in business",
-    ],
+    dates: "September 2021 – May 2026",
+    notes: [],
   },
   {
     institution: "Darmstadt University of Applied Sciences",

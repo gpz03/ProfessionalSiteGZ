@@ -44,7 +44,7 @@ export default function Contact() {
           <div>
             <p className="text-xs text-muted-foreground font-medium mb-0.5">LinkedIn</p>
             <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-              linkedin.com/in/gavinzola
+              {person.linkedin.replace("https://", "")}
             </p>
           </div>
         </a>
@@ -62,7 +62,7 @@ export default function Contact() {
           <div>
             <p className="text-xs text-muted-foreground font-medium mb-0.5">GitHub</p>
             <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-              github.com/gavinzola
+              {person.github.replace("https://", "")}
             </p>
           </div>
         </a>

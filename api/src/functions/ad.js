@@ -41,6 +41,55 @@ app.http('ad', {
             };
         };
 
+        // --- PROXY MODE ---
+        const url = new URL(request.url);
+        const backendUrlStr = process.env.NAS_BACKEND_URL;
+        if (backendUrlStr) {
+            try {
+                const targetUrl = new URL(url.pathname + url.search, backendUrlStr);
+                context.log(`Proxying Active Directory request to home server: ${targetUrl.toString()}`);
+
+                // Forward headers
+                const headers = new Headers();
+                for (const [key, val] of request.headers.entries()) {
+                    if (key.toLowerCase() !== 'host' && key.toLowerCase() !== 'connection') {
+                        headers.set(key, val);
+                    }
+                }
+                headers.set('ngrok-skip-browser-warning', 'true');
+
+                const backendRes = await fetch(targetUrl.toString(), {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                const resHeaders = {};
+                for (const [key, val] of backendRes.headers.entries()) {
+                    resHeaders[key] = val;
+                }
+
+                const resText = await backendRes.text();
+                let jsonBody;
+                try {
+                    jsonBody = JSON.parse(resText);
+                } catch(e) {
+                    jsonBody = { message: resText };
+                }
+
+                return addCors({
+                    status: backendRes.status,
+                    headers: resHeaders,
+                    jsonBody: jsonBody
+                });
+            } catch (err) {
+                context.error("Active Directory Proxy Error:", err);
+                return addCors({
+                    status: 502,
+                    jsonBody: { error: `Active Directory backend proxy failed: ${err.message}` }
+                });
+            }
+        }
+
         const isWindows = os.platform() === 'win32';
         const systemInfo = {
             hostname: os.hostname(),

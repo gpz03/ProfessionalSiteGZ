@@ -25,6 +25,59 @@ app.http('proxmox', {
             };
         }
 
+        // --- PROXY MODE ---
+        const url = new URL(request.url);
+        const backendUrlStr = process.env.NAS_BACKEND_URL;
+        if (backendUrlStr) {
+            try {
+                const targetUrl = new URL(url.pathname + url.search, backendUrlStr);
+                context.log(`Proxying Proxmox request to home server: ${targetUrl.toString()}`);
+
+                // Forward headers
+                const headers = new Headers();
+                for (const [key, val] of request.headers.entries()) {
+                    if (key.toLowerCase() !== 'host' && key.toLowerCase() !== 'connection') {
+                        headers.set(key, val);
+                    }
+                }
+                headers.set('ngrok-skip-browser-warning', 'true');
+
+                const backendRes = await fetch(targetUrl.toString(), {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                const resHeaders = {};
+                for (const [key, val] of backendRes.headers.entries()) {
+                    resHeaders[key] = val;
+                }
+
+                const resText = await backendRes.text();
+                let jsonBody;
+                try {
+                    jsonBody = JSON.parse(resText);
+                } catch(e) {
+                    jsonBody = { message: resText };
+                }
+
+                return {
+                    status: backendRes.status,
+                    headers: {
+                        ...corsHeaders,
+                        ...resHeaders
+                    },
+                    jsonBody: jsonBody
+                };
+            } catch (err) {
+                context.error("Proxmox Proxy Error:", err);
+                return {
+                    status: 502,
+                    headers: corsHeaders,
+                    jsonBody: { error: `Proxmox backend proxy failed: ${err.message}` }
+                };
+            }
+        }
+
         const now = Date.now();
         if (cachedData && (now - lastFetch) < CACHE_TTL) {
             return {

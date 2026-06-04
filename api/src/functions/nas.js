@@ -119,8 +119,15 @@ app.http('nas', {
 
                 // Read backend response headers
                 const resHeaders = {};
+                const excludeHeaders = [
+                    'content-encoding', 'content-length', 'transfer-encoding', 'connection',
+                    'keep-alive', 'access-control-allow-origin', 'access-control-allow-credentials',
+                    'access-control-allow-methods', 'access-control-allow-headers', 'server'
+                ];
                 for (const [key, val] of backendRes.headers.entries()) {
-                    resHeaders[key] = val;
+                    if (!excludeHeaders.includes(key.toLowerCase())) {
+                        resHeaders[key] = val;
+                    }
                 }
 
                 // If content is file download, stream body

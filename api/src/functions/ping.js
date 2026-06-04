@@ -58,8 +58,15 @@ app.http('ping', {
                 const backendRes = await fetch(targetUrl.toString(), fetchOptions);
 
                 const resHeaders = {};
+                const excludeHeaders = [
+                    'content-encoding', 'content-length', 'transfer-encoding', 'connection',
+                    'keep-alive', 'access-control-allow-origin', 'access-control-allow-credentials',
+                    'access-control-allow-methods', 'access-control-allow-headers', 'server'
+                ];
                 for (const [key, val] of backendRes.headers.entries()) {
-                    resHeaders[key] = val;
+                    if (!excludeHeaders.includes(key.toLowerCase())) {
+                        resHeaders[key] = val;
+                    }
                 }
 
                 const resText = await backendRes.text();

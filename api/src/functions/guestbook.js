@@ -35,7 +35,7 @@ app.http('guestbook', {
         };
 
         if (request.method === 'OPTIONS') {
-            return { status: 204, headers: corsHeaders };
+            return { status: 200, headers: corsHeaders };
         }
 
         const addCors = (responseObj) => {

@@ -20,7 +20,7 @@ app.http('proxmox', {
 
         if (request.method === 'OPTIONS') {
             return {
-                status: 204,
+                status: 200,
                 headers: corsHeaders
             };
         }

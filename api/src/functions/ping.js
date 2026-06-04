@@ -14,7 +14,7 @@ app.http('ping', {
 
         if (request.method === 'OPTIONS') {
             return {
-                status: 204,
+                status: 200,
                 headers: corsHeaders
             };
         }

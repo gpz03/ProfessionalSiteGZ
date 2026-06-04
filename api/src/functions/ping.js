@@ -85,8 +85,8 @@ app.http('ping', {
             } catch (err) {
                 context.error("Ping Proxy Error:", err);
                 return addCors({
-                    status: 200,
-                    jsonBody: { error: `Ping backend proxy failed: ${err.message}`, stack: err.stack }
+                    status: 502,
+                    jsonBody: { error: `Ping backend proxy failed: ${err.message}` }
                 });
             }
         }

@@ -540,60 +540,9 @@ app.http('powershell', {
             }
         }
 
-        // --- LOCAL DIRECTORY MODE (WINDOWS EXECUTION) ---
-        let body;
-        try {
-            body = await request.json();
-        } catch (e) {
-            return addCors({ status: 400, jsonBody: { error: "Invalid JSON body" } });
-        }
-
-        const { scriptId } = body;
-        if (!scriptId || !SCRIPTS[scriptId]) {
-            return addCors({ status: 400, jsonBody: { error: "Valid scriptId parameter is required" } });
-        }
-
-        try {
-            let storageDir = process.env.NAS_STORAGE_DIR || path.join(process.cwd(), 'nas_storage');
-            if (!fs.existsSync(storageDir)) {
-                storageDir = path.join(os.tmpdir(), 'nas_storage');
-            }
-
-            // Construct PowerShell code, injecting storage directory
-            let scriptCode = SCRIPTS[scriptId];
-            if (scriptId === 'storage') {
-                const escapedStorageDir = storageDir.replace(/\\/g, '\\\\');
-                scriptCode = scriptCode.replace('STORAGE_DIR_TEMPLATE', escapedStorageDir);
-            }
-
-            let logs = await runPowerShellScript(scriptCode);
-
-            if (!logs) {
-                // Fail-soft fallback to simulated logs
-                context.log("PowerShell command host unavailable. Running script in simulated mode.");
-                logs = getMockLogs(scriptId);
-                // Prepend warning that execution is mocked on this platform
-                logs.unshift({
-                    type: 'warning',
-                    text: `WARNING: PowerShell environment not available. Running script execution in mock simulation mode.`
-                });
-            }
-
-            return addCors({
-                status: 200,
-                jsonBody: {
-                    scriptId,
-                    timestamp: new Date().toISOString(),
-                    logs
-                }
-            });
-
-        } catch (err) {
-            context.error("PowerShell local handler error:", err);
-            return addCors({
-                status: 500,
-                jsonBody: { error: "Internal server error: " + err.message }
-            });
-        }
+                return addCors({
+            status: 503,
+            jsonBody: { error: "Home Lab connection offline. Please configure NAS_BACKEND_URL in the Azure Portal." }
+        });
     }
 });

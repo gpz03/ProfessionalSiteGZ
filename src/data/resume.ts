@@ -18,24 +18,24 @@ export const highlights = [
 export const projects = [
   {
     id: "cloud-lab",
-    title: "Azure CI/CD Pipeline",
+    title: "Dual-Target Azure & GitHub Pages CI/CD",
     status: "Completed",
     overview:
-      "Engineered an automated CI/CD pipeline deploying this React portfolio to Azure using GitHub Actions and Azure Static Web Apps, integrated with a live continuous deployment Guestbook that commits signatures to GitHub via the REST API.",
+      "Engineered a parallel multi-target CI/CD pipeline deploying this React portfolio to both Azure Static Web Apps and GitHub Pages using GitHub Actions, integrated with a live continuous deployment Guestbook that commits signatures to GitHub via the REST API.",
     goal:
-      "Build hands-on CI/CD automation skills by enabling visitors to trigger, track, and verify a real deployment pipeline run in real time.",
-    technologies: ["Microsoft Azure", "Azure Static Web Apps", "GitHub Actions", "GitHub REST API", "CI/CD Pipeline"],
+      "Build hands-on CI/CD automation skills by enabling visitors to trigger, track, and verify parallel deployment runs in real time.",
+    technologies: ["GitHub Actions", "Microsoft Azure", "Azure Static Web Apps", "GitHub Pages", "REST API", "DevOps Pipelines"],
     whatIDid: [
-      "Provisioned Azure Static Web App resources via the Azure CLI",
-      "Configured a GitHub Actions workflow for automated continuous integration and deployment",
+      "Configured concurrent GitHub Actions workflows for parallel builds targeting GitHub Pages and Azure Static Web Apps",
+      "Provisioned Azure Static Web App resources and configured secure deployment tokens",
       "Implemented a secure write-back API utilizing GitHub's Contents API to append visitor signatures directly to repository files",
       "Built a live pipeline tracker showing the workflow run's progress (Queued, Building, Deploying) and active logs directly from GitHub API"
     ],
-    result: "Completed — Pipeline fully integrated with a secure guestbook commit deployment visualizer.",
+    result: "Completed — Multi-cloud pipeline fully integrated with a secure guestbook commit deployment visualizer.",
     takeaways: [
-      "Designing automated CI/CD workflows and secure Git write-back integrations",
-      "Managing deployment secrets and securing API write scopes (XSS prevention and rate limiting)",
-      "Implementing cost-effective (zero-cost) enterprise cloud deployment structures"
+      "Designing automated parallel CI/CD workflows and secure Git write-back integrations",
+      "Configuring multi-platform static web hosting and deployment mirrors",
+      "Managing deployment secrets and securing API write scopes (XSS prevention and rate limiting)"
     ],
   },
   {

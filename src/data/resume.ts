@@ -46,7 +46,7 @@ export const projects = [
       "Configured a Network Attached Storage (NAS) file storage server integrated with the portfolio site, letting users upload, browse, download, and manage files under a 1GB quota, while providing secure, unlimited persistent storage for the administrator.",
     goal:
       "Demonstrate hands-on storage area network (SAN) and NAS concepts, API-based file management, role-based authorization, and storage quota enforcement.",
-    technologies: ["Synology", "Node.js", "Azure Functions", "File APIs", "Storage Quota System", "Vanilla CSS"],
+    technologies: ["Proxmox Storage", "Node.js", "Azure Functions", "File APIs", "Storage Quota System", "Vanilla CSS"],
     whatIDid: [
       "Implemented a file upload/download API endpoint in Azure Functions",
       "Designed a storage quota calculation module enforcing 1GB total limits for guests",
@@ -89,20 +89,20 @@ export const projects = [
     title: "Active Directory Home Lab",
     status: "Completed",
     overview:
-      "Built a bare-metal Type-1 hypervisor using Proxmox VE hosting a virtual Windows Server domain controller and Active Directory environment, equipped with a live frontend query tool to inspect system accounts and active services in real time.",
+      "Built a bare-metal Type-1 hypervisor using Proxmox VE hosting virtual servers, integrated with a live frontend system query tool to inspect system accounts and running services on the hosting Linux container in real time.",
     goal:
       "Practice hands-on enterprise virtualization, Active Directory administration, and operating system audits through secure, live integrations.",
-    technologies: ["Proxmox VE", "Windows Server 2022", "Active Directory", "PowerShell Cmdlets", "System Auditing"],
+    technologies: ["Proxmox VE", "Linux Containers", "System Auditing", "PowerShell Cmdlets", "User Management"],
     whatIDid: [
       "Provisioned a bare-metal Proxmox Virtual Environment (PVE)",
-      "Set up a virtualized Windows Server domain controller and configured Active Directory Domain Services (AD DS)",
-      "Built an OS-level query endpoint using PowerShell child-processes to fetch active domain users, running processes, and network setups",
-      "Designed a real-time frontend Directory Explorer allowing visitors to execute active audits on the hosting server",
-      "Configured Group Policy Objects (GPOs) and organizational units (OUs) for system hardening"
+      "Set up virtualized Windows Server domain controllers and Linux containers inside Proxmox",
+      "Built an OS-level query endpoint using system child-processes to fetch active local users, running processes, and network setups",
+      "Designed a real-time frontend Directory Explorer allowing visitors to execute active audits on the hosting container",
+      "Configured security permissions and organizational structures for system hardening"
     ],
-    result: "Completed — AD DS environment fully deployed and integrated with live query tools on this portfolio.",
+    result: "Completed — Hypervisor environment deployed and integrated with live query tools on this portfolio.",
     takeaways: [
-      "Deep familiarity with Windows Server roles, AD DS administration, and domain architecture",
+      "Deep familiarity with virtualization roles, administrative scripting, and system architecture",
       "Executing safe, read-only administrative PowerShell scripts via API endpoints",
       "Diagnosing network virtualization, DHCP, DNS, and secure directory services"
     ],

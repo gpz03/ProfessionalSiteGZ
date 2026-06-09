@@ -108,7 +108,7 @@ export default function ProxmoxLabViewer() {
             <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
               {error}
               <br /><br />
-              If you are the administrator, ensure your ngrok Tunnel is active and your Azure Static Web Apps environment variables (PROXMOX_URL, PROXMOX_TOKEN_ID, PROXMOX_SECRET) are configured.
+              If you are the administrator, ensure your Cloudflare Tunnel is active and your container boot-up environment variables (PROXMOX_URL, PROXMOX_TOKEN_ID, PROXMOX_SECRET) are configured in /etc/local.d/portfolio.start.
             </p>
           </div>
         )}
@@ -207,7 +207,7 @@ export default function ProxmoxLabViewer() {
             
             <div className="pt-2 flex justify-between items-center border-t border-border/40">
               <p className="text-[10px] text-muted-foreground">
-                Data securely fetched via Azure Serverless & ngrok Tunnel
+                Data securely fetched via Proxmox Hypervisor & Cloudflare Tunnel
               </p>
               <p className="text-[10px] text-muted-foreground font-mono">
                 Last updated: {new Date(data.timestamp).toLocaleTimeString()}

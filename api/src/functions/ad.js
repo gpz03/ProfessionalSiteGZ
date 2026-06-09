@@ -165,8 +165,8 @@ app.http('ad', {
                 }
 
                 try {
-                    // Get top running processes as services
-                    const ps = await runCmd('ps -eo comm,pid,stat --sort=-%cpu | head -n 11');
+                    // Get top running processes as services (compatible with busybox ps on Alpine)
+                    const ps = await runCmd('ps -eo comm,pid,stat | head -n 11');
                     services = ps.split('\n').slice(1).map(line => {
                         const tokens = line.trim().split(/\s+/);
                         return {

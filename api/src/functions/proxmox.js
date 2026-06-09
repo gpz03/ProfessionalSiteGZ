@@ -143,10 +143,49 @@ app.http('proxmox', {
                 });
             };
 
-            // Fetch node status and qemu VMs
+            // Fetch node status, qemu VMs, and LXC containers
             // We assume the primary node is named 'pve' (default)
             const nodeStatus = await fetchData('/api2/json/nodes/pve/status');
-            const vms = await fetchData('/api2/json/nodes/pve/qemu');
+            let qemuVms = { data: [] };
+            let lxcContainers = { data: [] };
+            
+            try {
+                qemuVms = await fetchData('/api2/json/nodes/pve/qemu');
+            } catch (err) {
+                context.log("Failed to fetch QEMU VMs:", err.message);
+            }
+            
+            try {
+                lxcContainers = await fetchData('/api2/json/nodes/pve/lxc');
+            } catch (err) {
+                context.log("Failed to fetch LXC containers:", err.message);
+            }
+
+            const combinedVms = [];
+            
+            if (qemuVms && qemuVms.data) {
+                combinedVms.push(...qemuVms.data.map(vm => ({
+                    vmid: vm.vmid,
+                    name: vm.name,
+                    status: vm.status,
+                    uptime: vm.uptime || 0,
+                    cpu: vm.cpu || 0,
+                    maxcpu: vm.cpus || 1,
+                    maxmem: vm.maxmem || 0
+                })));
+            }
+            
+            if (lxcContainers && lxcContainers.data) {
+                combinedVms.push(...lxcContainers.data.map(ct => ({
+                    vmid: ct.vmid,
+                    name: ct.name,
+                    status: ct.status,
+                    uptime: ct.uptime || 0,
+                    cpu: ct.cpu || 0,
+                    maxcpu: ct.cpus || 1,
+                    maxmem: ct.maxmem || 0
+                })));
+            }
 
             const result = {
                 timestamp: new Date().toISOString(),
@@ -163,15 +202,7 @@ app.http('proxmox', {
                         total: nodeStatus.data.rootfs.total
                     }
                 },
-                vms: vms.data.map(vm => ({
-                    vmid: vm.vmid,
-                    name: vm.name,
-                    status: vm.status,
-                    uptime: vm.uptime,
-                    cpu: vm.cpu,
-                    maxcpu: vm.cpus,
-                    maxmem: vm.maxmem
-                }))
+                vms: combinedVms
             };
 
             cachedData = result;

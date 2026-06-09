@@ -45,7 +45,7 @@ export const projects = [
     overview:
       "Configured a Network Attached Storage (NAS) file storage server integrated with the portfolio site, letting users upload, browse, download, and manage files under a 1GB quota, while providing secure, unlimited persistent storage for the administrator.",
     goal:
-      "Demonstrate hands-on storage area network (SAN) and NAS concepts, API-based file management, role-based authorization, and storage quota enforcement.",
+      "Demonstrate hands-on NAS concepts, API-based file management, role-based authorization, and storage quota enforcement.",
     technologies: ["Proxmox Storage", "Node.js", "Azure Functions", "File APIs", "Storage Quota System", "Vanilla CSS"],
     whatIDid: [
       "Implemented a file upload/download API endpoint in Azure Functions",

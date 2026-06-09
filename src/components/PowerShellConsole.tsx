@@ -93,10 +93,10 @@ type ScriptKey = keyof typeof SCRIPTS_DB;
 export default function PowerShellConsole() {
   const [selectedScript, setSelectedScript] = useState<ScriptKey>("diagnostics");
   const [terminalLines, setTerminalLines] = useState<LogLine[]>([
-    { type: "stdout", text: "Windows PowerShell" },
-    { type: "stdout", text: "Copyright (C) Microsoft Corporation. All rights reserved." },
+    { type: "stdout", text: "PowerShell Core" },
+    { type: "stdout", text: "Copyright (c) Microsoft Corporation." },
     { type: "stdout", text: "" },
-    { type: "stdout", text: "PS C:\\Users\\Administrator> # Select a script from the panel and click 'Run Script' to execute." }
+    { type: "stdout", text: "PS /root> # Select a script from the panel and click 'Run Script' to execute." }
   ]);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [progress, setProgress] = useState<{ percent: number; status: string } | null>(null);
@@ -123,7 +123,7 @@ export default function PowerShellConsole() {
     setTerminalLines(prev => [
       ...prev,
       { type: "stdout", text: "" },
-      { type: "stdout", text: `PS C:\\Users\\Administrator> .\\${SCRIPTS_DB[selectedScript].title}` }
+      { type: "stdout", text: `PS /root> ./${SCRIPTS_DB[selectedScript].title}` }
     ]);
 
     try {
@@ -174,7 +174,7 @@ export default function PowerShellConsole() {
         setTerminalLines(prev => [
           ...prev,
           { type: "stdout", text: "" },
-          { type: "stdout", text: "PS C:\\Users\\Administrator>" }
+          { type: "stdout", text: "PS /root>" }
         ]);
       }, currentDelay + 200);
 
@@ -185,17 +185,17 @@ export default function PowerShellConsole() {
       setTerminalLines(prev => [
         ...prev,
         { type: "error", text: `Error connecting to execution host: ${err.message || err}` },
-        { type: "stdout", text: "PS C:\\Users\\Administrator>" }
+        { type: "stdout", text: "PS /root>" }
       ]);
     }
   };
 
   const clearConsole = () => {
     setTerminalLines([
-      { type: "stdout", text: "Windows PowerShell" },
-      { type: "stdout", text: "Copyright (C) Microsoft Corporation. All rights reserved." },
+      { type: "stdout", text: "PowerShell Core" },
+      { type: "stdout", text: "Copyright (c) Microsoft Corporation." },
       { type: "stdout", text: "" },
-      { type: "stdout", text: "PS C:\\Users\\Administrator>" }
+      { type: "stdout", text: "PS /root>" }
     ]);
   };
 
@@ -279,7 +279,7 @@ export default function PowerShellConsole() {
         <div className="bg-[#001735] px-4 py-2.5 flex items-center justify-between border-b border-[#012456]/40 select-none">
           <div className="flex items-center gap-2">
             <Terminal size={14} className="text-primary-foreground/70" />
-            <span className="font-mono text-xs font-bold text-slate-300">Administrator: Windows PowerShell</span>
+            <span className="font-mono text-xs font-bold text-slate-300">root@portfolio-api: PowerShell Core</span>
           </div>
           {/* Mock Windows Controls */}
           <div className="flex items-center gap-1.5">

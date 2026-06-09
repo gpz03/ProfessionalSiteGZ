@@ -57,32 +57,33 @@ app.http('guestbook', {
         // --- GET METHOD ---
         if (request.method === 'GET') {
             try {
+                // Primary: Fetch directly from GitHub raw content to get the latest committed signatures
+                const url = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/${filePathInRepo}`;
+                try {
+                    const res = await fetch(url, { headers: { 'Cache-Control': 'no-cache' } });
+                    if (res.ok) {
+                        const data = await res.json();
+                        return addCors({ status: 200, jsonBody: data });
+                    }
+                } catch (fetchErr) {
+                    context.error("Failed to fetch from GitHub raw content, falling back to local files:", fetchErr.message);
+                }
+
+                // Fallback: Check local temporary files
                 const os = require('os');
                 const fallbackPath = path.join(os.tmpdir(), 'guestbook.json');
-                
-                // If a temporary fallback file exists in SWA runtime, read it first
                 if (fs.existsSync(fallbackPath)) {
                     const content = fs.readFileSync(fallbackPath, 'utf8');
                     return addCors({ status: 200, jsonBody: JSON.parse(content) });
                 }
 
-                // If running locally, we can read local guestbook.json
+                // Fallback: Check local files inside repository
                 if (fs.existsSync(localPath)) {
                     const content = fs.readFileSync(localPath, 'utf8');
                     return addCors({ status: 200, jsonBody: JSON.parse(content) });
                 }
                 
-                // Fallback to fetching directly from GitHub Pages or GitHub API
-                // In production, the file is compiled in the static frontend asset list,
-                // but we can also fetch it directly from the raw GitHub contents to get the latest
-                const url = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/${filePathInRepo}`;
-                const res = await fetch(url);
-                if (res.ok) {
-                    const data = await res.json();
-                    return addCors({ status: 200, jsonBody: data });
-                }
-                
-                // Return empty list if file doesn't exist
+                // Return empty list if no source is available
                 return addCors({ status: 200, jsonBody: [] });
             } catch (err) {
                 context.error("Failed to read guestbook.json:", err.message);

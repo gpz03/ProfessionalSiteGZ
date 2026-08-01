@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { HardDrive, Upload, Download, Trash2, Loader2, RefreshCw, Key, Shield, ShieldCheck, AlertCircle, FileText, FileImage, FileCode, FileVideo, FileAudio, File } from "lucide-react";
+import { HardDrive, Upload, Download, Trash2, Loader2, RefreshCw, Shield, AlertCircle, FileText, FileImage, FileCode, FileVideo, FileAudio, File } from "lucide-react";
 import { getApiUrl } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
@@ -13,104 +13,36 @@ export default function NasExplorer() {
   const { toast } = useToast();
   const [files, setFiles] = useState<NasFile[]>([]);
   const [totalSize, setTotalSize] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(1024 * 1024 * 1024); // Default 1GB
-  const [mode, setMode] = useState<"guest" | "owner">("guest");
+  const [limit, setLimit] = useState<number>(1024 * 1024 * 1024); // 1GB Guest Limit
   const [loading, setLoading] = useState<boolean>(true);
   const [uploading, setUploading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [adminKeyInput, setAdminKeyInput] = useState<string>("");
-  const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Check if admin key exists in localStorage on mount
   useEffect(() => {
-    const savedKey = localStorage.getItem("nas_admin_key");
-    if (savedKey) {
-      setIsUnlocked(true);
-    }
-    fetchFiles(savedKey || undefined);
+    fetchFiles();
   }, []);
 
-  const fetchFiles = async (keyOverride?: string) => {
+  const fetchFiles = async () => {
     setLoading(true);
     setError(null);
-    const key = keyOverride !== undefined ? keyOverride : (localStorage.getItem("nas_admin_key") || "");
     
     try {
-      const headers: Record<string, string> = {};
-      if (key) {
-        headers["Authorization"] = `Bearer ${key}`;
-      }
-
-      const res = await fetch(getApiUrl("/api/nas"), { headers });
+      // Guest mode fetch (no Authorization header)
+      const res = await fetch(getApiUrl("/api/nas"));
       if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
-          // Key is invalid, clear it
-          localStorage.removeItem("nas_admin_key");
-          setIsUnlocked(false);
-          throw new Error("Invalid access key. Reverted to Guest Mode.");
-        }
         throw new Error(`Server responded with status ${res.status}`);
       }
 
       const data = await res.json();
       setFiles(data.files || []);
       setTotalSize(data.totalSize || 0);
-      setLimit(data.limit || 0);
-      
-      if (key && data.mode === "guest") {
-        // Key was submitted but backend returned guest mode, meaning the key is invalid
-        localStorage.removeItem("nas_admin_key");
-        setIsUnlocked(false);
-        setMode("guest");
-        toast({
-          variant: "destructive",
-          title: "Authentication Failed",
-          description: "Invalid owner access key. Reverted to Guest Mode.",
-        });
-      } else {
-        setMode(data.mode || "guest");
-        if (key && data.mode === "owner") {
-          setIsUnlocked(true);
-        }
-      }
+      setLimit(data.limit || 1024 * 1024 * 1024);
     } catch (err: any) {
-      setError(err.message || "Failed to load NAS files.");
-      if (key) {
-        localStorage.removeItem("nas_admin_key");
-        setIsUnlocked(false);
-        fetchFiles("");
-      }
+      setError(err.message || "Failed to load guest files.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleUnlock = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!adminKeyInput.trim()) return;
-
-    localStorage.setItem("nas_admin_key", adminKeyInput.trim());
-    await fetchFiles(adminKeyInput.trim());
-    setAdminKeyInput("");
-    setShowAdminPanel(false);
-    
-    toast({
-      title: "Authentication",
-      description: "Successfully authenticated. Storage quota limits lifted.",
-    });
-  };
-
-  const handleLock = () => {
-    localStorage.removeItem("nas_admin_key");
-    setIsUnlocked(false);
-    setMode("guest");
-    fetchFiles("");
-    toast({
-      title: "Locked",
-      description: "Returned to guest mode. 1GB quota re-applied.",
-    });
   };
 
   const formatBytes = (bytes: number) => {
@@ -148,26 +80,21 @@ export default function NasExplorer() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const key = localStorage.getItem("nas_admin_key");
-
-    // Client-side validation for guests
-    if (!key) {
-      if (file.size > 1024 * 1024 * 1024) {
-        toast({
-          variant: "destructive",
-          title: "File too large",
-          description: "Guests are limited to a maximum file size of 1GB.",
-        });
-        return;
-      }
-      if (totalSize + file.size > limit) {
-        toast({
-          variant: "destructive",
-          title: "Quota Exceeded",
-          description: "This upload exceeds the guest total storage limit of 1GB.",
-        });
-        return;
-      }
+    if (file.size > 1024 * 1024 * 1024) {
+      toast({
+        variant: "destructive",
+        title: "File too large",
+        description: "Guest uploads are limited to a maximum file size of 1GB.",
+      });
+      return;
+    }
+    if (totalSize + file.size > limit) {
+      toast({
+        variant: "destructive",
+        title: "Quota Exceeded",
+        description: "This upload exceeds the guest total storage limit of 1GB.",
+      });
+      return;
     }
 
     setUploading(true);
@@ -175,14 +102,8 @@ export default function NasExplorer() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const headers: Record<string, string> = {};
-      if (key) {
-        headers["Authorization"] = `Bearer ${key}`;
-      }
-
       const res = await fetch(getApiUrl("/api/nas"), {
         method: "POST",
-        headers,
         body: formData
       });
 
@@ -193,7 +114,7 @@ export default function NasExplorer() {
 
       toast({
         title: "Success",
-        description: `Successfully uploaded "${file.name}"`,
+        description: `Successfully uploaded "${file.name}" to Guest Sandbox`,
       });
 
       fetchFiles();
@@ -210,17 +131,8 @@ export default function NasExplorer() {
   };
 
   const handleDownload = async (fileName: string) => {
-    const key = localStorage.getItem("nas_admin_key");
     try {
-      const headers: Record<string, string> = {};
-      if (key) {
-        headers["Authorization"] = `Bearer ${key}`;
-      }
-
-      const res = await fetch(getApiUrl(`/api/nas?file=${encodeURIComponent(fileName)}`), {
-        headers
-      });
-
+      const res = await fetch(getApiUrl(`/api/nas?file=${encodeURIComponent(fileName)}`));
       if (!res.ok) {
         throw new Error(`Failed to download: ${res.statusText}`);
       }
@@ -244,18 +156,11 @@ export default function NasExplorer() {
   };
 
   const handleDelete = async (fileName: string) => {
-    if (!confirm(`Are you sure you want to delete "${fileName}"?`)) return;
+    if (!confirm(`Are you sure you want to delete "${fileName}" from the Guest Sandbox?`)) return;
 
-    const key = localStorage.getItem("nas_admin_key");
     try {
-      const headers: Record<string, string> = {};
-      if (key) {
-        headers["Authorization"] = `Bearer ${key}`;
-      }
-
       const res = await fetch(getApiUrl(`/api/nas?file=${encodeURIComponent(fileName)}`), {
-        method: "DELETE",
-        headers
+        method: "DELETE"
       });
 
       if (!res.ok) {
@@ -278,7 +183,6 @@ export default function NasExplorer() {
     }
   };
 
-  // Quota percentage for guests
   const guestQuotaPercent = limit > 0 ? (totalSize / limit) * 100 : 0;
 
   return (
@@ -288,65 +192,21 @@ export default function NasExplorer() {
           <HardDrive size={18} className="text-primary" />
           <h3 className="font-semibold text-foreground tracking-tight">Live NAS Cloud Storage</h3>
           
-          <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-            mode === "owner" 
-              ? "bg-green-500/10 border-green-500/20 text-green-500" 
-              : "bg-primary/10 border-primary/20 text-primary"
-          }`}>
-            {mode === "owner" ? <ShieldCheck size={10} /> : <Shield size={10} />}
-            {mode === "owner" ? "Owner Mode (Permanent)" : "Guest Mode (1GB Quota)"}
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border bg-primary/10 border-primary/20 text-primary">
+            <Shield size={10} />
+            Guest Sandbox Mode (1GB Quota)
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          {isUnlocked ? (
-            <button
-              onClick={handleLock}
-              className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20 transition-all"
-              title="Lock Admin Access"
-            >
-              <Key size={12} />
-              Lock
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowAdminPanel(!showAdminPanel)}
-              className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded bg-muted hover:bg-muted/80 text-foreground border border-border/80 transition-all"
-            >
-              <Key size={12} />
-              {showAdminPanel ? "Close" : "Unlock Admin"}
-            </button>
-          )}
-
-          <button 
-            onClick={() => fetchFiles()} 
-            disabled={loading}
-            className="p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 border border-border/40"
-            title="Refresh Files"
-          >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-          </button>
-        </div>
+        <button 
+          onClick={() => fetchFiles()} 
+          disabled={loading}
+          className="p-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 border border-border/40"
+          title="Refresh Files"
+        >
+          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+        </button>
       </div>
-
-      {showAdminPanel && !isUnlocked && (
-        <form onSubmit={handleUnlock} className="p-4 bg-muted/40 border-b border-border flex gap-2 items-center">
-          <Key size={16} className="text-muted-foreground flex-shrink-0" />
-          <input
-            type="password"
-            placeholder="Enter Owner Access Key..."
-            value={adminKeyInput}
-            onChange={(e) => setAdminKeyInput(e.target.value)}
-            className="flex-1 text-sm bg-card border border-border rounded px-3 py-1.5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
-          />
-          <button 
-            type="submit"
-            className="text-xs px-3.5 py-2 bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/90 transition-all"
-          >
-            Verify
-          </button>
-        </form>
-      )}
 
       <div className="p-6">
         {/* Storage Quota Bar */}
@@ -354,26 +214,20 @@ export default function NasExplorer() {
           <div className="flex justify-between items-center text-xs font-medium text-muted-foreground mb-2">
             <span>NAS Storage Capacity</span>
             <span className="font-mono">
-              {formatBytes(totalSize)} {mode === "owner" ? "used" : `/ ${formatBytes(limit)} used`}
+              {formatBytes(totalSize)} / {formatBytes(limit)} used
             </span>
           </div>
           
           <div className="h-2 w-full bg-muted rounded-full overflow-hidden border border-border/30">
-            {mode === "owner" ? (
-              <div className="h-full bg-green-500 rounded-full" style={{ width: "100%" }} />
-            ) : (
-              <div 
-                className={`h-full rounded-full transition-all duration-500 ${
-                  guestQuotaPercent > 90 ? "bg-destructive" : guestQuotaPercent > 60 ? "bg-amber-500" : "bg-primary"
-                }`}
-                style={{ width: `${Math.min(guestQuotaPercent, 100)}%` }}
-              />
-            )}
+            <div 
+              className={`h-full rounded-full transition-all duration-500 ${
+                guestQuotaPercent > 90 ? "bg-destructive" : guestQuotaPercent > 60 ? "bg-amber-500" : "bg-primary"
+              }`}
+              style={{ width: `${Math.min(guestQuotaPercent, 100)}%` }}
+            />
           </div>
           <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
-            {mode === "owner" 
-              ? "Persistent Owner Drive unlocked: Storage capacity limit disabled. Files are stored privately and permanently on your home server's NAS partition." 
-              : "Shared Public Sandbox: Files uploaded in Guest Mode are visible to all visitors and share a collective 1GB quota. Files are saved in a transient partition and can be deleted by any visitor."}
+            Shared Public Sandbox: Files uploaded in Guest Mode are visible to all visitors and share a collective 1GB quota. Files are saved in a transient partition.
           </p>
         </div>
 
@@ -399,14 +253,14 @@ export default function NasExplorer() {
               {uploading ? "Uploading file..." : "Select File to Upload"}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              {mode === "owner" ? "No file size limit" : "Maximum upload file size: 1GB"}
+              Maximum upload file size: 1GB
             </p>
           </button>
         </div>
 
         {/* File Index */}
         <div>
-          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Stored Files</h4>
+          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Public Guest Files</h4>
 
           {loading && files.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
@@ -421,8 +275,8 @@ export default function NasExplorer() {
           ) : files.length === 0 ? (
             <div className="py-12 border border-border/50 border-dashed rounded-lg flex flex-col items-center justify-center text-center text-muted-foreground">
               <HardDrive size={24} className="mb-2 opacity-50" />
-              <p className="text-xs font-semibold">NAS Storage empty</p>
-              <p className="text-[10px] mt-0.5">Upload a file to start using the system.</p>
+              <p className="text-xs font-semibold">Guest Sandbox empty</p>
+              <p className="text-[10px] mt-0.5">Upload a file to test the cloud storage system.</p>
             </div>
           ) : (
             <div className="border border-border/60 rounded-lg overflow-x-auto bg-card">

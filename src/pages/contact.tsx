@@ -1,8 +1,22 @@
 import { person } from "@/data/resume";
 import { Mail } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Contact() {
+  const { toast } = useToast();
+
+  const handleEmailClick = () => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(person.email).then(() => {
+        toast({
+          title: "Email Copied",
+          description: `${person.email} copied to clipboard!`,
+        });
+      }).catch(() => {});
+    }
+  };
+
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 py-14">
       <div className="mb-10">
@@ -17,8 +31,10 @@ export default function Contact() {
       <div className="max-w-md flex flex-col gap-4" data-testid="contact-links">
         <a
           href={`mailto:${person.email}`}
+          onClick={handleEmailClick}
+          title="Click to email or copy address"
           data-testid="contact-email"
-          className="flex items-center gap-4 p-4 border border-border rounded-lg bg-card hover:border-primary/40 hover:bg-muted/50 transition-all group"
+          className="flex items-center gap-4 p-4 border border-border rounded-lg bg-card hover:border-primary/40 hover:bg-muted/50 transition-all group cursor-pointer"
         >
           <div className="p-2.5 rounded-md bg-primary/10 text-primary">
             <Mail size={18} />

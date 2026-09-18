@@ -13,10 +13,23 @@ import NasExplorer from "@/components/NasExplorer";
 import PipelineVisualizer from "@/components/PipelineVisualizer";
 import PowerShellConsole from "@/components/PowerShellConsole";
 import NetworkTopologySimulator from "@/components/NetworkTopologySimulator";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
+  const { toast } = useToast();
   const [location, setLocation] = useLocation();
   const [isResumeExpanded, setIsResumeExpanded] = useState<boolean>(false);
+
+  const handleEmailClick = () => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(person.email).then(() => {
+        toast({
+          title: "Email Copied",
+          description: `${person.email} copied to clipboard!`,
+        });
+      }).catch(() => {});
+    }
+  };
 
   // Listen for navigation requests to expand the resume details accordion
   useEffect(() => {
@@ -85,7 +98,9 @@ export default function Home() {
           <div className="flex flex-wrap gap-3">
             <a
               href={`mailto:${person.email}`}
-              className="inline-flex items-center gap-2 px-4 py-2.5 border border-primary/20 bg-primary/5 rounded-lg text-xs font-semibold text-foreground hover:border-primary/50 hover:bg-primary/10 transition-all shadow-sm"
+              onClick={handleEmailClick}
+              title="Click to email or copy address"
+              className="inline-flex items-center gap-2 px-4 py-2.5 border border-primary/20 bg-primary/5 rounded-lg text-xs font-semibold text-foreground hover:border-primary/50 hover:bg-primary/10 transition-all shadow-sm cursor-pointer"
             >
               <Mail size={14} className="text-primary" /> {person.email}
             </a>
@@ -552,7 +567,9 @@ export default function Home() {
                 <div className="flex flex-wrap gap-3">
                   <a
                     href={`mailto:${person.email}`}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity"
+                    onClick={handleEmailClick}
+                    title="Click to email or copy address"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     <Mail size={12} /> Contact Me
                   </a>

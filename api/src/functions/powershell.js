@@ -525,25 +525,25 @@ app.http('powershell', {
                     }
                 }
 
-                const resText = await backendRes.text();
-                let jsonBody;
-                try {
-                    jsonBody = JSON.parse(resText);
-                } catch(e) {
-                    jsonBody = { message: resText };
-                }
+                if (backendRes.ok) {
+                    const resText = await backendRes.text();
+                    let jsonBody;
+                    try {
+                        jsonBody = JSON.parse(resText);
+                    } catch(e) {
+                        jsonBody = { message: resText };
+                    }
 
-                return addCors({
-                    status: backendRes.status,
-                    headers: resHeaders,
-                    jsonBody: jsonBody
-                });
+                    return addCors({
+                        status: backendRes.status,
+                        headers: resHeaders,
+                        jsonBody: jsonBody
+                    });
+                } else {
+                    context.log(`PowerShell proxy returned status ${backendRes.status}, falling back to local host script engine.`);
+                }
             } catch (err) {
-                context.error("PowerShell Proxy Error:", err);
-                return addCors({
-                    status: 502,
-                    jsonBody: { error: `PowerShell backend proxy failed: ${err.message}` }
-                });
+                context.log(`PowerShell proxy failed (${err.message}), falling back to local host script engine.`);
             }
         }
 

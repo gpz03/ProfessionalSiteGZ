@@ -12,3 +12,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .antigravity
+local.settings.json
+api/local.settings.json
+nas_storage
+api/nas_storage
+api/src/data
+build_log.txt

@@ -57,37 +57,37 @@ app.http('ping', {
 
                 const backendRes = await fetch(targetUrl.toString(), fetchOptions);
 
-                const resHeaders = {};
-                const excludeHeaders = [
-                    'content-encoding', 'content-length', 'transfer-encoding', 'connection',
-                    'keep-alive', 'access-control-allow-origin', 'access-control-allow-credentials',
-                    'access-control-allow-methods', 'access-control-allow-headers', 'server'
-                ];
-                for (const [key, val] of backendRes.headers.entries()) {
-                    if (!excludeHeaders.includes(key.toLowerCase())) {
-                        resHeaders[key] = val;
+                if (backendRes.ok) {
+                    const resHeaders = {};
+                    const excludeHeaders = [
+                        'content-encoding', 'content-length', 'transfer-encoding', 'connection',
+                        'keep-alive', 'access-control-allow-origin', 'access-control-allow-credentials',
+                        'access-control-allow-methods', 'access-control-allow-headers', 'server'
+                    ];
+                    for (const [key, val] of backendRes.headers.entries()) {
+                        if (!excludeHeaders.includes(key.toLowerCase())) {
+                            resHeaders[key] = val;
+                        }
                     }
-                }
 
-                const resText = await backendRes.text();
-                let jsonBody;
-                try {
-                    jsonBody = JSON.parse(resText);
-                } catch(e) {
-                    jsonBody = { message: resText };
-                }
+                    const resText = await backendRes.text();
+                    let jsonBody;
+                    try {
+                        jsonBody = JSON.parse(resText);
+                    } catch(e) {
+                        jsonBody = { message: resText };
+                    }
 
-                return addCors({
-                    status: backendRes.status,
-                    headers: resHeaders,
-                    jsonBody: jsonBody
-                });
+                    return addCors({
+                        status: backendRes.status,
+                        headers: resHeaders,
+                        jsonBody: jsonBody
+                    });
+                } else {
+                    context.log(`Ping proxy returned status ${backendRes.status}, falling back to local Azure serverless execution.`);
+                }
             } catch (err) {
-                context.error("Ping Proxy Error:", err);
-                return addCors({
-                    status: 502,
-                    jsonBody: { error: `Ping backend proxy failed: ${err.message}` }
-                });
+                context.log(`Ping proxy failed (${err.message}), falling back to local Azure serverless execution.`);
             }
         }
 

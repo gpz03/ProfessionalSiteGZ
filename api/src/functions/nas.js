@@ -140,25 +140,25 @@ app.http('nas', {
                     });
                 }
 
-                const resText = await backendRes.text();
-                let jsonBody;
-                try {
-                    jsonBody = JSON.parse(resText);
-                } catch(e) {
-                    jsonBody = { message: resText };
-                }
+                if (backendRes.ok) {
+                    const resText = await backendRes.text();
+                    let jsonBody;
+                    try {
+                        jsonBody = JSON.parse(resText);
+                    } catch(e) {
+                        jsonBody = { message: resText };
+                    }
 
-                return addCors({
-                    status: backendRes.status,
-                    headers: resHeaders,
-                    jsonBody: jsonBody
-                });
+                    return addCors({
+                        status: backendRes.status,
+                        headers: resHeaders,
+                        jsonBody: jsonBody
+                    });
+                } else {
+                    context.log(`NAS proxy returned status ${backendRes.status}, falling back to local storage sandbox.`);
+                }
             } catch (err) {
-                context.error("NAS Proxy Error:", err);
-                return addCors({
-                    status: 502,
-                    jsonBody: { error: `NAS backend proxy failed: ${err.message}` }
-                });
+                context.log(`NAS proxy failed (${err.message}), falling back to local storage sandbox.`);
             }
         }
 

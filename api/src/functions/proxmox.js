@@ -59,29 +59,28 @@ app.http('proxmox', {
                     }
                 }
 
-                const resText = await backendRes.text();
-                let jsonBody;
-                try {
-                    jsonBody = JSON.parse(resText);
-                } catch(e) {
-                    jsonBody = { message: resText };
-                }
+                if (backendRes.ok) {
+                    const resText = await backendRes.text();
+                    let jsonBody;
+                    try {
+                        jsonBody = JSON.parse(resText);
+                    } catch(e) {
+                        jsonBody = { message: resText };
+                    }
 
-                return {
-                    status: backendRes.status,
-                    headers: {
-                        ...corsHeaders,
-                        ...resHeaders
-                    },
-                    jsonBody: jsonBody
-                };
+                    return {
+                        status: backendRes.status,
+                        headers: {
+                            ...corsHeaders,
+                            ...resHeaders
+                        },
+                        jsonBody: jsonBody
+                    };
+                } else {
+                    context.log(`Proxmox proxy returned status ${backendRes.status}, falling back to direct hypervisor connection check.`);
+                }
             } catch (err) {
-                context.error("Proxmox Proxy Error:", err);
-                return {
-                    status: 502,
-                    headers: corsHeaders,
-                    jsonBody: { error: `Proxmox backend proxy failed: ${err.message}` }
-                };
+                context.log(`Proxmox proxy failed (${err.message}), falling back to direct hypervisor connection check.`);
             }
         }
 

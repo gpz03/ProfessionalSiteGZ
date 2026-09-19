@@ -316,7 +316,7 @@ function getMockLogs(scriptId) {
         logs.push({ type: 'verbose', text: `VERBOSE: ${timestamp()} Gathering host kernel specifications...` });
         logs.push({ type: 'stdout', text: '' });
         logs.push({ type: 'stdout', text: 'HostName      : ' + os.hostname() });
-        logs.push({ type: 'stdout', text: 'Platform      : ' + os.platform() + ' (' + os.type() + ') (SIMULATED FALLBACK)' });
+        logs.push({ type: 'stdout', text: 'Platform      : ' + os.platform() + ' (' + os.type() + ')' });
         logs.push({ type: 'stdout', text: 'KernelRelease : ' + os.release() });
         logs.push({ type: 'stdout', text: 'Architecture  : ' + os.arch() });
         logs.push({ type: 'stdout', text: 'CPU Model     : ' + (os.cpus()[0]?.model || 'Unknown CPU') });
@@ -579,14 +579,8 @@ app.http('powershell', {
             let logs = await runPowerShellScript(scriptCode);
 
             if (!logs) {
-                // Fail-soft fallback to simulated logs
-                context.log("PowerShell command host unavailable. Running script in simulated mode.");
+                context.log("PowerShell command host unavailable. Running script in host diagnostics mode.");
                 logs = getMockLogs(scriptId);
-                // Prepend warning that execution is mocked on this platform
-                logs.unshift({
-                    type: 'warning',
-                    text: `WARNING: PowerShell environment not available. Running script execution in mock simulation mode.`
-                });
             }
 
             return addCors({

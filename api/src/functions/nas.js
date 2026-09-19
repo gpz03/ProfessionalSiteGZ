@@ -175,24 +175,6 @@ app.http('nas', {
         try {
             const fileName = url.searchParams.get('file');
 
-            // Seed initial mock files for local demo if directory is empty
-            if (fs.existsSync(targetDir)) {
-                try {
-                    const seededFlag = path.join(targetDir, '.seeded');
-                    if (!fs.existsSync(seededFlag)) {
-                        const entries = fs.readdirSync(targetDir);
-                        const fileEntries = entries.filter(e => fs.statSync(path.join(targetDir, e)).isFile() && !e.startsWith('.'));
-                        if (fileEntries.length === 0) {
-                            fs.writeFileSync(path.join(targetDir, 'presentation.pdf'), Buffer.alloc(1048576)); // 1MB mock file
-                            fs.writeFileSync(path.join(targetDir, 'backup_config.xml'), Buffer.from('<config><version>1.0</version></config>'));
-                        }
-                        fs.writeFileSync(seededFlag, 'true');
-                    }
-                } catch (e) {
-                    context.log("Failed to seed mock files:", e.message);
-                }
-            }
-
             if (request.method === 'GET') {
                 if (fileName) {
                     const safeName = path.basename(fileName);

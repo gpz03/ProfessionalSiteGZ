@@ -394,9 +394,8 @@ function getMockLogs(scriptId) {
         logs.push({ type: 'stdout', text: '----                      ------------   ------------' });
         
         if (files.length === 0) {
-            logs.push({ type: 'stdout', text: 'presentation.pdf          1,048,576      2026-05-23T21:40:02Z' });
-            logs.push({ type: 'stdout', text: 'backup_config.xml         4,500          2026-05-23T21:43:50Z' });
-            totalSize = 1053076;
+            logs.push({ type: 'stdout', text: 'No files currently found in guest sandbox partition.' });
+            totalSize = 0;
         } else {
             files.slice(0, 5).forEach(f => {
                 logs.push({ type: 'stdout', text: `${f.name.padEnd(25)} ${f.size.toString().padEnd(14)} ${f.mtime.toISOString().substring(0, 19)}Z` });
@@ -421,41 +420,14 @@ function getMockLogs(scriptId) {
         logs.push({ type: 'progress', percent: 10, status: 'Contacting domain controller' });
         logs.push({ type: 'verbose', text: `VERBOSE: ${timestamp()} Loading Audit-ActiveDirectory.ps1...` });
         logs.push({ type: 'stdout', text: `[INFO] ${timestamp()} Initializing Active Directory Domain Services connection...` });
+        logs.push({ type: 'stdout', text: `[INFO] ${timestamp()} Target Domain Controller: 192.168.1.10 (DC-01.zola.local)` });
         
-        logs.push({ type: 'progress', percent: 45, status: 'Reading directory database' });
-        logs.push({ type: 'warning', text: `WARNING: ${timestamp()} Domain Controller 'DC-ZOLA-01' is running in hybrid Azure AD mode.` });
-        
-        logs.push({ type: 'verbose', text: `VERBOSE: ${timestamp()} Auditing Active Directory Users database...` });
+        logs.push({ type: 'progress', percent: 45, status: 'Querying directory database' });
+        logs.push({ type: 'error', text: `[-] ERROR: ${timestamp()} Unable to reach Active Directory Domain Controller at 192.168.1.10:389.` });
+        logs.push({ type: 'error', text: `[-] ERROR: ActiveDirectory PowerShell module / NTDS service not found on this standalone host.` });
         logs.push({ type: 'stdout', text: '' });
-        logs.push({ type: 'stdout', text: 'Name            Enabled   Description' });
-        logs.push({ type: 'stdout', text: '----            -------   -----------' });
-        logs.push({ type: 'stdout', text: 'Administrator   True      Built-in account for administering the domain' });
-        logs.push({ type: 'stdout', text: 'Guest           False     Built-in account for guest access' });
-        logs.push({ type: 'stdout', text: 'gavin.zola      True      Domain Administrator (IT Operations)' });
-        logs.push({ type: 'stdout', text: 'test.user       True      Standard User Account (Finance)' });
-        logs.push({ type: 'stdout', text: 'apiuser         True      Read-Only Service Account (PVE Auditor)' });
-        logs.push({ type: 'stdout', text: '' });
-
-        logs.push({ type: 'progress', percent: 75, status: 'Checking core service logs' });
-        logs.push({ type: 'verbose', text: `VERBOSE: ${timestamp()} Auditing running Domain Services...` });
-        logs.push({ type: 'stdout', text: 'Name              Status    DisplayName' });
-        logs.push({ type: 'stdout', text: '----              ------    -----------' });
-        logs.push({ type: 'stdout', text: 'ActiveDirectory   Running   Active Directory Domain Services (NTDS)' });
-        logs.push({ type: 'stdout', text: 'DNS               Running   DNS Server (Named)' });
-        logs.push({ type: 'stdout', text: 'DHCP              Running   DHCP Server (DHCPServer)' });
-        logs.push({ type: 'stdout', text: 'KerberosKeyDist   Running   Kerberos Key Distribution Center (KDC)' });
-        logs.push({ type: 'stdout', text: '' });
-
-        logs.push({ type: 'progress', percent: 90, status: 'Evaluating group policies' });
-        logs.push({ type: 'verbose', text: `VERBOSE: ${timestamp()} Checking Group Policy Objects (GPOs)...` });
-        logs.push({ type: 'stdout', text: 'GPO Name                     Status    Link Path' });
-        logs.push({ type: 'stdout', text: '--------                     ------    ---------' });
-        logs.push({ type: 'stdout', text: 'Default Domain Policy        Active    dc=zola,dc=local' });
-        logs.push({ type: 'stdout', text: 'Secured_Workstations_Policy  Active    ou=Workstations,dc=zola,dc=local' });
-        logs.push({ type: 'stdout', text: '' });
-
         logs.push({ type: 'progress', percent: 100, status: 'Complete' });
-        logs.push({ type: 'success', text: `[SUCCESS] ${timestamp()} Active Directory security and status audit completed successfully.` });
+        logs.push({ type: 'error', text: `[FAILED] ${timestamp()} Active Directory audit failed: DC-01 is unreachable from current network.` });
     }
     return logs;
 }

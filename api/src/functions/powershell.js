@@ -486,6 +486,17 @@ app.http('powershell', {
             };
         };
 
+        let body = {};
+        let bodyText = '';
+        try {
+            bodyText = await request.text();
+            if (bodyText) {
+                body = JSON.parse(bodyText);
+            }
+        } catch (e) {
+            return addCors({ status: 400, jsonBody: { error: "Invalid JSON body" } });
+        }
+
         // --- PROXY MODE ---
         const url = new URL(request.url);
         const backendUrlStr = process.env.NAS_BACKEND_URL;
@@ -505,11 +516,10 @@ app.http('powershell', {
 
                 const fetchOptions = {
                     method: 'POST',
-                    headers: headers
+                    headers: headers,
+                    body: bodyText,
+                    signal: AbortSignal.timeout(2500)
                 };
-
-                const bodyText = await request.text();
-                fetchOptions.body = bodyText;
 
                 const backendRes = await fetch(targetUrl.toString(), fetchOptions);
 
@@ -548,14 +558,7 @@ app.http('powershell', {
         }
 
         // --- LOCAL DIRECTORY MODE (WINDOWS EXECUTION) ---
-        let body;
-        try {
-            body = await request.json();
-        } catch (e) {
-            return addCors({ status: 400, jsonBody: { error: "Invalid JSON body" } });
-        }
-
-        const { scriptId } = body;
+        const scriptId = body.scriptId || body.script;
         if (!scriptId || !SCRIPTS[scriptId]) {
             return addCors({ status: 400, jsonBody: { error: "Valid scriptId parameter is required" } });
         }

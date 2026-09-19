@@ -60,7 +60,8 @@ app.http('ad', {
 
                 const backendRes = await fetch(targetUrl.toString(), {
                     method: 'GET',
-                    headers: headers
+                    headers: headers,
+                    signal: AbortSignal.timeout(2500)
                 });
 
                 if (backendRes.ok) {

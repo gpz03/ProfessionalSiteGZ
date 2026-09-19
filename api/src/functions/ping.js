@@ -48,7 +48,8 @@ app.http('ping', {
 
                 const fetchOptions = {
                     method: request.method,
-                    headers: headers
+                    headers: headers,
+                    signal: AbortSignal.timeout(2500)
                 };
 
                 if (request.method !== 'GET' && request.method !== 'HEAD') {

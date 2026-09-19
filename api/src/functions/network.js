@@ -113,6 +113,17 @@ app.http('network', {
             };
         };
 
+        let body = {};
+        let bodyText = '';
+        try {
+            bodyText = await request.text();
+            if (bodyText) {
+                body = JSON.parse(bodyText);
+            }
+        } catch (e) {
+            return addCors({ status: 400, jsonBody: { error: "Invalid JSON body" } });
+        }
+
         // --- PROXY MODE ---
         const url = new URL(request.url);
         const backendUrlStr = process.env.NAS_BACKEND_URL;
@@ -129,11 +140,11 @@ app.http('network', {
                 }
                 headers.set('ngrok-skip-browser-warning', 'true');
 
-                const bodyText = await request.text();
                 const backendRes = await fetch(targetUrl.toString(), {
                     method: 'POST',
                     headers: headers,
-                    body: bodyText
+                    body: bodyText,
+                    signal: AbortSignal.timeout(2500)
                 });
 
                 if (backendRes.ok) {
@@ -171,12 +182,6 @@ app.http('network', {
         }
 
         // --- LOCAL DIRECTORY MODE ---
-        let body;
-        try {
-            body = await request.json();
-        } catch (e) {
-            return addCors({ status: 400, jsonBody: { error: "Invalid JSON body" } });
-        }
 
         const { source, destination, tool, icmpBlock, vlanIsolate, webBlock, ipsActive } = body;
         if (!source || !destination || !tool) {

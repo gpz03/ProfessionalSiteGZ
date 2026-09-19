@@ -44,7 +44,8 @@ app.http('proxmox', {
 
                 const backendRes = await fetch(targetUrl.toString(), {
                     method: 'GET',
-                    headers: headers
+                    headers: headers,
+                    signal: AbortSignal.timeout(2500)
                 });
 
                 const resHeaders = {};

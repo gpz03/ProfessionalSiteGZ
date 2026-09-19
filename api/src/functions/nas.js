@@ -82,6 +82,15 @@ app.http('nas', {
             fs.mkdirSync(targetDir, { recursive: true });
         }
 
+        let parsedFormData = null;
+        if (request.method === 'POST') {
+            try {
+                parsedFormData = await request.formData();
+            } catch (e) {
+                context.log("Failed to parse formData:", e.message);
+            }
+        }
+
         const url = new URL(request.url);
 
         // --- PROXY MODE ---
@@ -102,13 +111,13 @@ app.http('nas', {
 
                 const fetchOptions = {
                     method: request.method,
-                    headers: headers
+                    headers: headers,
+                    signal: AbortSignal.timeout(2500)
                 };
 
-                if (request.method === 'POST') {
-                    const formData = await request.formData();
+                if (request.method === 'POST' && parsedFormData) {
                     const newFormData = new FormData();
-                    for (const [key, val] of formData.entries()) {
+                    for (const [key, val] of parsedFormData.entries()) {
                         newFormData.append(key, val);
                     }
                     fetchOptions.body = newFormData;
@@ -237,7 +246,10 @@ app.http('nas', {
             }
 
             if (request.method === 'POST') {
-                const formData = await request.formData();
+                const formData = parsedFormData || await request.formData().catch(() => null);
+                if (!formData) {
+                    return addCors({ status: 400, jsonBody: { error: "No file provided" } });
+                }
                 const file = formData.get('file');
                 if (!file) {
                     return addCors({ status: 400, jsonBody: { error: "No file provided" } });

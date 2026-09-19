@@ -173,6 +173,18 @@ app.http('nas', {
 
         // --- LOCAL DIRECTORY MODE ---
         try {
+            // Clean up any legacy mock files from previous test deployments
+            const legacyFlag = path.join(targetDir, '.seeded');
+            if (fs.existsSync(legacyFlag)) {
+                try {
+                    const mock1 = path.join(targetDir, 'presentation.pdf');
+                    const mock2 = path.join(targetDir, 'backup_config.xml');
+                    if (fs.existsSync(mock1)) fs.unlinkSync(mock1);
+                    if (fs.existsSync(mock2)) fs.unlinkSync(mock2);
+                    fs.unlinkSync(legacyFlag);
+                } catch (e) {}
+            }
+
             const fileName = url.searchParams.get('file');
 
             if (request.method === 'GET') {

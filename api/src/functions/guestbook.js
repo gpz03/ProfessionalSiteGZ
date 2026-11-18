@@ -116,10 +116,11 @@ app.http('guestbook', {
                 });
             }
 
-            // Parse request body
+            // Parse request body safely (supports application/json and text/plain)
             let body;
             try {
-                body = await request.json();
+                const text = await request.text();
+                body = text ? JSON.parse(text) : {};
             } catch(e) {
                 return addCors({ status: 400, jsonBody: { error: "Invalid JSON body" } });
             }

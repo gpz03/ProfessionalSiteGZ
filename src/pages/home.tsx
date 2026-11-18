@@ -20,14 +20,19 @@ export default function Home() {
   const [location, setLocation] = useLocation();
   const [isResumeExpanded, setIsResumeExpanded] = useState<boolean>(false);
 
-  const handleEmailClick = () => {
+  const handleEmailClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(person.email).then(() => {
         toast({
           title: "Email Copied",
           description: `${person.email} copied to clipboard!`,
         });
-      }).catch(() => {});
+      }).catch(() => {
+        window.location.href = `mailto:${person.email}`;
+      });
+    } else {
+      window.location.href = `mailto:${person.email}`;
     }
   };
 
@@ -44,19 +49,19 @@ export default function Home() {
       setIsResumeExpanded(true);
       // Wait for state expansion update, then scroll smoothly to the target section
       setTimeout(() => {
-        const id = location.replace("/", "");
+        const id = normalizedPath.replace("/", "");
         const element = document.getElementById(id);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }, 150);
-    } else if (location === "/projects") {
+    } else if (normalizedPath === "/projects") {
       // Scroll to first lab project
       const element = document.getElementById("cloud-lab-section");
       if (element) {
         element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
-    } else if (location === "/") {
+    } else if (normalizedPath === "/") {
       // Ensure we scroll to the top when navigating home
       window.scrollTo({ top: 0, behavior: "smooth" });
     }

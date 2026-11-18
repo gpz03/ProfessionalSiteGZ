@@ -15,6 +15,7 @@ const navLinks = [
 export default function Nav() {
   const [location] = useLocation();
   const [open, setOpen] = useState(false);
+  const normalizedLocation = location.replace(/^\/ProfessionalSiteGZ/, "") || "/";
 
   const handleNavClick = (href: string) => {
     if (href === "/") {
@@ -29,7 +30,7 @@ export default function Nav() {
       setTimeout(() => {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 50);
+      }, 150);
     }
   };
 
@@ -55,7 +56,7 @@ export default function Nav() {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-2">
           {navLinks.map((link) => {
-            const isActive = location === link.href;
+            const isActive = normalizedLocation === link.href;
             return (
               <Link
                 key={link.href}
@@ -90,7 +91,7 @@ export default function Nav() {
         <div className="md:hidden border-t border-border/30 bg-background/95 backdrop-blur-md animate-in slide-in-from-top-2 duration-200">
           <nav className="max-w-5xl mx-auto px-4 py-4 flex flex-col gap-2">
             {navLinks.map((link) => {
-              const isActive = location === link.href;
+              const isActive = normalizedLocation === link.href;
               return (
                 <Link
                   key={link.href}

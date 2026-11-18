@@ -230,6 +230,9 @@ export default function ActiveDirectoryExplorer() {
                   <Search size={14} className="absolute left-3 top-2.5 text-muted-foreground" />
                   <input
                     type="text"
+                    id="filter-users"
+                    name="filterUsers"
+                    aria-label="Filter user accounts"
                     placeholder="Filter user accounts..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -281,6 +284,9 @@ export default function ActiveDirectoryExplorer() {
                   <Search size={14} className="absolute left-3 top-2.5 text-muted-foreground" />
                   <input
                     type="text"
+                    id="filter-services"
+                    name="filterServices"
+                    aria-label="Filter active running services"
                     placeholder="Filter active running services..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

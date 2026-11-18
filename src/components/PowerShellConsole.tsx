@@ -129,7 +129,7 @@ export default function PowerShellConsole() {
     try {
       const response = await fetch(getApiUrl("/api/powershell"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({ scriptId: selectedScript })
       });
 

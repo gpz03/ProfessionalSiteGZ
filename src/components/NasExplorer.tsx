@@ -159,8 +159,8 @@ export default function NasExplorer() {
     if (!confirm(`Are you sure you want to delete "${fileName}" from the Guest Sandbox?`)) return;
 
     try {
-      const res = await fetch(getApiUrl(`/api/nas?file=${encodeURIComponent(fileName)}`), {
-        method: "DELETE"
+      const res = await fetch(getApiUrl(`/api/nas?action=delete&file=${encodeURIComponent(fileName)}`), {
+        method: "POST"
       });
 
       if (!res.ok) {
@@ -235,6 +235,9 @@ export default function NasExplorer() {
         <div className="mb-6">
           <input 
             type="file" 
+            id="nas-file-upload"
+            name="nasFileUpload"
+            aria-label="Upload file to NAS"
             ref={fileInputRef} 
             onChange={handleFileChange} 
             className="hidden" 

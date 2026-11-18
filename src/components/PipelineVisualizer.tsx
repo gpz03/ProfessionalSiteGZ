@@ -162,7 +162,7 @@ export default function PipelineVisualizer() {
     try {
       const res = await fetch(getApiUrl("/api/guestbook"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({ name: name.trim(), message: message.trim() })
       });
 
@@ -228,10 +228,12 @@ export default function PipelineVisualizer() {
         <form onSubmit={handleSign} className="space-y-4 mb-8">
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+              <label htmlFor="guestbook-name" className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
                 Your Name
               </label>
               <input
+                id="guestbook-name"
+                name="name"
                 type="text"
                 maxLength={50}
                 required
@@ -243,10 +245,12 @@ export default function PipelineVisualizer() {
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+              <label htmlFor="guestbook-message" className="block text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
                 Short Message
               </label>
               <input
+                id="guestbook-message"
+                name="message"
                 type="text"
                 maxLength={250}
                 required

@@ -121,7 +121,7 @@ export default function NetworkTopologySimulator() {
     try {
       const res = await fetch(getApiUrl("/api/network"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({
           source,
           destination,
@@ -389,8 +389,10 @@ export default function NetworkTopologySimulator() {
           {/* Diagnostics config */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-[10px] font-mono uppercase text-muted-foreground mb-1">Source Host</label>
+              <label htmlFor="source-host-select" className="block text-[10px] font-mono uppercase text-muted-foreground mb-1">Source Host</label>
               <select
+                id="source-host-select"
+                name="sourceHost"
                 disabled={isAnimating}
                 value={source}
                 onChange={(e) => setSource(e.target.value)}
@@ -403,8 +405,10 @@ export default function NetworkTopologySimulator() {
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono uppercase text-muted-foreground mb-1">Destination Host</label>
+              <label htmlFor="destination-host-select" className="block text-[10px] font-mono uppercase text-muted-foreground mb-1">Destination Host</label>
               <select
+                id="destination-host-select"
+                name="destinationHost"
                 disabled={isAnimating}
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
@@ -417,8 +421,10 @@ export default function NetworkTopologySimulator() {
             </div>
 
             <div>
-              <label className="block text-[10px] font-mono uppercase text-muted-foreground mb-1">Diagnostic Tool</label>
+              <label htmlFor="diagnostic-tool-select" className="block text-[10px] font-mono uppercase text-muted-foreground mb-1">Diagnostic Tool</label>
               <select
+                id="diagnostic-tool-select"
+                name="diagnosticTool"
                 disabled={isAnimating}
                 value={diagnosticTool}
                 onChange={(e) => setDiagnosticTool(e.target.value as any)}

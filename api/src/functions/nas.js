@@ -292,7 +292,7 @@ app.http('nas', {
                 });
             }
 
-            if (request.method === 'DELETE') {
+            if (request.method === 'DELETE' || (request.method === 'POST' && url.searchParams.get('action') === 'delete')) {
                 if (!fileName) {
                     return addCors({ status: 400, jsonBody: { error: "Filename parameter required" } });
                 }

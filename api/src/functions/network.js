@@ -12,7 +12,9 @@ const NODES = {
     dc: { name: "Domain Controller (DC-01)", ip: "192.168.1.10", type: "server" },
     nas: { name: "Personal NAS", ip: "192.168.1.50", type: "server" },
     ws1: { name: "Workstation 1 (VLAN 10)", ip: "192.168.10.15", type: "workstation" },
-    ws2: { name: "Workstation 2 (VLAN 20)", ip: "192.168.20.22", type: "workstation" }
+    ws2: { name: "Workstation 2 (VLAN 20)", ip: "192.168.20.22", type: "workstation" },
+    "ws-1": { name: "Workstation 1 (VLAN 10)", ip: "192.168.10.15", type: "workstation" },
+    "ws-2": { name: "Workstation 2 (VLAN 20)", ip: "192.168.20.22", type: "workstation" }
 };
 
 // Map node ID to IP
@@ -183,10 +185,15 @@ app.http('network', {
 
         // --- LOCAL DIRECTORY MODE ---
 
-        const { source, destination, tool, icmpBlock, vlanIsolate, webBlock, ipsActive } = body;
+        let { source, destination, tool, icmpBlock, vlanIsolate, webBlock, ipsActive } = body;
         if (!source || !destination || !tool) {
             return addCors({ status: 400, jsonBody: { error: "Parameters source, destination, and tool are required" } });
         }
+
+        if (source === "ws-1") source = "ws1";
+        if (source === "ws-2") source = "ws2";
+        if (destination === "ws-1") destination = "ws1";
+        if (destination === "ws-2") destination = "ws2";
 
         const srcNode = NODES[source];
         const destNode = NODES[destination];

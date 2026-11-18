@@ -45,7 +45,8 @@ export default function Home() {
 
   // Sync wouter URLs with dashboard state
   useEffect(() => {
-    if (["/experience", "/skills", "/about", "/contact"].includes(location)) {
+    const normalizedPath = location.replace(/^\/ProfessionalSiteGZ/, "") || "/";
+    if (["/experience", "/skills", "/about", "/contact"].includes(normalizedPath)) {
       setIsResumeExpanded(true);
       // Wait for state expansion update, then scroll smoothly to the target section
       setTimeout(() => {
